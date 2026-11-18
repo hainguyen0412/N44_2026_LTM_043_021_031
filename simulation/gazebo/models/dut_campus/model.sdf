@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="dut_campus">
+    <static>true</static>
+    <link name="campus">
+      <visual name="campus_visual">
+        <geometry><mesh><uri>model://dut_campus/meshes/campus.dae</uri></mesh></geometry>
+      </visual>
+      <collision name="ground_col"><pose>0 0 -0.05 0 0 0</pose>
+        <geometry><box><size>3000 3000 0.1</size></box></geometry></collision>
+    <collision name="col_khu_A_main"><pose>-58.50 375.00 9.00 0 0 0</pose><geometry><box><size>102.00 24.00 18.00</size></box></geometry></collision>
+    <collision name="col_khu_A_north"><pose>-72.75 414.00 5.40 0 0 0</pose><geometry><box><size>85.50 12.00 10.80</size></box></geometry></collision>
+    <collision name="col_toa_nha_thong_minh"><pose>28.50 396.00 12.60 0 0 0</pose><geometry><box><size>42.00 48.00 25.20</size></box></geometry></collision>
+    <collision name="col_khu_E_east"><pose>53.25 357.75 5.40 0 0 0</pose><geometry><box><size>16.50 37.50 10.80</size></box></geometry></collision>
+    <collision name="col_khu_G_1"><pose>-226.50 393.00 7.20 0 0 0</pose><geometry><box><size>72.00 18.00 14.40</size></box></geometry></collision>
+    <collision name="col_khu_G_2"><pose>-246.00 358.50 7.20 0 0 0</pose><geometry><box><size>57.00 21.00 14.40</size></box></geometry></collision>
+    <collision name="col_khu_G_3"><pose>-183.75 346.50 5.40 0 0 0</pose><geometry><box><size>82.50 15.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_G_4"><pose>-138.00 381.00 5.40 0 0 0</pose><geometry><box><size>45.00 18.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_G_5"><pose>-176.25 373.50 5.40 0 0 0</pose><geometry><box><size>22.50 21.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_G_6"><pose>-268.50 387.00 5.40 0 0 0</pose><geometry><box><size>18.00 24.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_B_ngang"><pose>-195.00 286.50 7.20 0 0 0</pose><geometry><box><size>129.00 15.00 14.40</size></box></geometry></collision>
+    <collision name="col_khu_B_doc"><pose>-123.00 246.00 7.20 0 0 0</pose><geometry><box><size>15.00 72.00 14.40</size></box></geometry></collision>
+    <collision name="col_khu_B_trai"><pose>-253.50 295.50 5.40 0 0 0</pose><geometry><box><size>12.00 33.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_F"><pose>-93.00 244.50 10.80 0 0 0</pose><geometry><box><size>21.00 75.00 21.60</size></box></geometry></collision>
+    <collision name="col_hoi_truong_F"><pose>-67.50 231.00 5.40 0 0 0</pose><geometry><box><size>36.00 18.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_H"><pose>-51.75 211.50 5.40 0 0 0</pose><geometry><box><size>43.50 15.00 10.80</size></box></geometry></collision>
+    <collision name="col_khu_C"><pose>35.25 256.50 7.20 0 0 0</pose><geometry><box><size>46.50 45.00 14.40</size></box></geometry></collision>
+    <collision name="col_thu_vien"><pose>-39.00 117.00 12.60 0 0 0</pose><geometry><box><size>39.00 36.00 25.20</size></box></geometry></collision>
+    <collision name="col_nha_phai_1"><pose>28.50 139.50 5.40 0 0 0</pose><geometry><box><size>18.00 30.00 10.80</size></box></geometry></collision>
+    <collision name="col_day_nha_phai_2"><pose>13.50 53.25 5.40 0 0 0</pose><geometry><box><size>12.00 52.50 10.80</size></box></geometry></collision>
+    <collision name="col_day_nha_phai_3"><pose>54.00 53.25 5.40 0 0 0</pose><geometry><box><size>12.00 52.50 10.80</size></box></geometry></collision>
+    <collision name="col_day_nha_duoi"><pose>-39.00 23.25 3.60 0 0 0</pose><geometry><box><size>63.00 22.50 7.20</size></box></geometry></collision>
+    </link>
+  </model>
+</sdf>
