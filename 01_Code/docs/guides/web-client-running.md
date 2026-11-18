@@ -1,5 +1,8 @@
 # Chạy web client và mission
 
+Các lệnh PowerShell dưới đây chạy từ `01_Code` hoặc từ thư mục chứa
+`CMakeLists.txt` trong gói đã giải nén.
+
 ## 1. Chọn đúng kiểu demo
 
 | Trường hợp | Cấu hình | Cổng |
@@ -13,10 +16,10 @@ Web và gateway phải dùng cùng một file cấu hình hoặc các bản sao 
 
 ## 2. Thử ngay tại Windows bằng dữ liệu giả lập
 
-Mở ba cửa sổ PowerShell riêng. Cả ba đứng tại thư mục project:
+Mở ba cửa sổ PowerShell riêng. Nếu đang ở gốc repository, chuyển vào gốc mã nguồn trong mỗi cửa sổ.
 
 ```powershell
-cd "D:\BK_subjects\Nam_4_ki_1\LT_mang\du_an_cuoi_ki\Project_CK_LTM_v2"
+Set-Location .\01_Code
 ```
 
 Cửa sổ 1 — gateway:
@@ -76,7 +79,10 @@ Mở **http://127.0.0.1:8080**. Hai file CMD gọi các lệnh trên thông qua 
 
 ### Ubuntu
 
-Dùng lệnh đã chạy thành công với world của bạn:
+Từ bản clone, đặt `01_Code/simulation/gazebo/worlds/dut_campus.sdf` vào
+`Tools/simulation/gz/worlds/` của PX4-Autopilot. Đặt nguyên thư mục
+`01_Code/simulation/gazebo/models/dut_campus/` vào
+`Tools/simulation/gz/models/` để giữ các đường dẫn mesh và texture.
 
 ```bash
 cd ~/PX4-Autopilot

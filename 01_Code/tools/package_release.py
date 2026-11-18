@@ -7,8 +7,8 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIRECTORIES = {'apps', 'include', 'src', 'config', 'tests', 'tools', 'examples',
-                      'scripts', 'third_party', 'docs', '.github', 'web_client', 'simulation'}
-SOURCE_ROOT_FILES = {'README.md', 'CMakeLists.txt', 'CMakePresets.json', '.gitignore', '.gitattributes'}
+                      'scripts', 'third_party', 'docs', 'web_client', 'simulation'}
+SOURCE_ROOT_FILES = {'README.md', 'CMakeLists.txt', 'CMakePresets.json'}
 
 
 def source_files():
@@ -45,12 +45,14 @@ def main():
         files += binaries
     kind = 'windows' if args.with_binaries else 'source'
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-    archive = output/f'{ROOT.name}-{kind}-{stamp}.zip'
+    # Keep the release layout flat relative to the CMake project in both forms.
+    project_name = ROOT.parent.name if ROOT.name == '01_Code' else ROOT.name
+    archive = output/f'{project_name}-{kind}-{stamp}.zip'
     manifest = ''.join(hashlib.sha256(file.read_bytes()).hexdigest()+'  '+file.relative_to(ROOT).as_posix()+'\n' for file in files)
     with zipfile.ZipFile(archive, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as release:
         for file in files:
-            release.write(file, ROOT.name+'/'+file.relative_to(ROOT).as_posix())
-        release.writestr(ROOT.name+'/MANIFEST.sha256', manifest)
+            release.write(file, project_name+'/'+file.relative_to(ROOT).as_posix())
+        release.writestr(project_name+'/MANIFEST.sha256', manifest)
     with zipfile.ZipFile(archive) as release:
         if release.testzip() is not None:
             raise RuntimeError('ZIP verification failed')

@@ -4,7 +4,8 @@ Ngày lập và cập nhật: 16/11/2026. Dự án làm việc: `Project_CK_LTM_
 
 **Cập nhật 16/11/2026: đã triển khai web local, mission, map và tích hợp gateway; bộ CTest đầy đủ đạt 20/20. Chưa nghiệm thu UI trực tiếp hoặc chuyến bay PX4/Gazebo trên Ubuntu.**
 
-Mã web được tách trong `web_client/` theo yêu cầu sau khi lập kế hoạch. Xem [cách chạy](../guides/web-client-running.md), [báo cáo kiểm thử](../verification/web-client-results.md).
+Mã web được tách trong `web_client/` sau khi lập kế hoạch. Xem [cách chạy](../guides/web-client-running.md).
+Bản ghi kiểm thử nằm tại `03_Phu_luc/Ket_qua_kiem_thu/web-client-results.md` tính từ gốc repository.
 
 Các điểm triển khai khác cây dự kiến:
 
@@ -15,7 +16,8 @@ Các điểm triển khai khác cây dự kiến:
 - Hạng mục có checkbox là đã thực hiện ở phạm vi code/local nêu trong báo cáo; chưa thay thế điều kiện qua mốc UI/SITL bằng test fake peer. Những bước yêu cầu đo thực, CI trên GitHub và publish tiếp tục để trống.
 
 
-Các đường dẫn tương đối tính từ thư mục gốc. Cây ở mục 5 giữ làm tham chiếu thiết kế ban đầu; đối chiếu cây triển khai thực tế trong web_client/README.md.
+Các đường dẫn mã nguồn tương đối tính từ `01_Code`. Cây ở mục 5 là tham chiếu thiết kế ban đầu.
+Đối chiếu cây triển khai thực tế trong `web_client/README.md`.
 
 ## 1. Kết quả cuối cùng cần đạt
 
@@ -231,7 +233,7 @@ Triển khai theo thứ tự để dễ xem diff và khoanh vùng lỗi. Có th�
 - [x] P00.5 Lưu bản tham chiếu giao diện campus đã duyệt, không coi HTML minh họa là frontend đã tích hợp.
 - [x] P00.6 Nếu checkout có Git, ghi trạng thái thay đổi trước khi làm để không ghi đè công việc đang dở; việc tạo tài liệu kế hoạch không tự bao gồm thao tác push.
 
-**Đầu ra:** ghi chú baseline và kết quả test trong `output/test_results/`; thông tin tham chiếu trong `docs/verification/`.
+**Đầu ra:** ghi chú baseline và kết quả test trong `output/test_results/`; bản ghi tham chiếu tại `03_Phu_luc/Ket_qua_kiem_thu/` tính từ gốc repository.
 
 **Điều kiện qua mốc:** build/test nền đạt, hoặc từng lỗi có sẵn được chỉ rõ trước khi bắt đầu refactor.
 

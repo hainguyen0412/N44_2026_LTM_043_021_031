@@ -249,4 +249,5 @@ Các lựa chọn như số cổng client, dung lượng hàng đợi, timeout, 
 - Chỉ nhận JSON chung lồng nhóm; cấu hình phẳng cũ bị từ chối.
 - run_id/stop_file/run_seconds và các tùy chọn ép send là CLI của gateway, không thêm khóa phẳng vào JSON chung.
 - Gateway dùng module Parser/Decoder/Inspector/CsvLogger thật của B cho B0/B1/B2.
-- Xem README.md và docs/running.md để build/chạy; scripts/test.ps1 gọi CTest để kiểm chứng.
+- Xem `README.md` và `docs/guides/running.md` từ gốc mã nguồn để build và chạy.
+  `scripts/test.ps1` gọi CTest để kiểm chứng.

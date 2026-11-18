@@ -1,126 +1,79 @@
-# MAVLink Gateway — Project_CK_LTM_v2
+# MAVLink Telemetry Gateway và Packet Inspector
 
-Dự án C++17 nhận MAVLink 2 qua UDP, kiểm tra khung và chuyển tiếp tới client TCP.
-Web local hiển thị telemetry, điều khiển và lập mission trên map campus DUT.
-Windows 64 bit chạy gateway/client; máy Ubuntu riêng chạy PX4 1.15.4 và Gazebo.
+Đồ án cuối kỳ môn Lập trình mạng, nhóm 16. Gateway C++17 nhận MAVLink 2 qua UDP,
+kiểm tra khung và phân phối telemetry cho các client TCP. Console hỗ trợ vai
+trò observer và controller. Web local hiển thị telemetry, điều khiển qua Gateway
+và hỗ trợ lập, nạp, đọc lại và xác minh mission trên bản đồ khuôn viên DUT.
 
-## Mở web
+## Cấu trúc repository
 
-Trong `scripts/windows/`, mở hai file và giữ hai cửa sổ chạy:
+| Thư mục | Nội dung |
+|---|---|
+| [01_Code](01_Code/README.md) | Mã nguồn C++ và web, cấu hình mẫu, CMake, script, fixture và tài nguyên Gazebo |
+| [02_Bao_cao](02_Bao_cao/BAO_CAO_CUOI_KI_NHOM16.docx) | Báo cáo cuối kỳ Word |
+| [03_Phu_luc](03_Phu_luc/Ket_qua_kiem_thu/README.md) | Các bản ghi kiểm chứng theo phiên bản |
+| [.github/workflows](.github/workflows/windows-ci.yml) | Build, CTest và kiểm tra gói trên Windows |
 
-1. `CHAY_GATEWAY_MISSION.cmd`
-2. `CHAY_WEB_CLIENT.cmd`
+## Build và kiểm thử trên Windows
 
-Mở **http://127.0.0.1:8080**. Có thể xem map khi chưa có PX4; nhận telemetry và
-điều khiển cần PX4 gửi UDP tới Windows.
-
-Chạy trực tiếp bằng hai cửa sổ PowerShell tại gốc project:
-
-```powershell
-.\bin\gateway.exe --config config/gateway.mission.example.json
-```
-
-```powershell
-.\bin\web_client.exe --config config/gateway.mission.example.json
-```
-
-Gateway/web/console **không ghi log file và không có tùy chọn bật**. Lỗi, ACK và
-tiến độ vẫn hiện trên màn hình. Dừng từng chương trình bằng Ctrl+C.
-
-Hướng dẫn: [web và demo hai máy](docs/guides/web-client-running.md).
-
-## Cây thư mục
-
-```text
-Project_CK_LTM_v2/
-├── bin/                       # gateway.exe, web_client.exe, c_client.exe
-├── config/                    # Cấu hình chung, mission và cấu hình máy
-├── apps/                      # Entry point gateway và console
-├── include/mavlink_gateway/    # Giao diện và kiểu dữ liệu chung
-├── src/
-│   ├── gateway/               # A: UDP/TCP, client, định tuyến, queue
-│   ├── processing/            # B: parser, CRC, decoder, Inspector
-│   ├── logging/               # B: thư viện CSV cho kiểm thử/đo kiểm
-│   ├── client/                # C: runtime, lệnh/ACK và mission
-│   └── config/                # Kiểm tra cấu hình JSON
-├── web_client/
-│   ├── frontend/              # HTML/CSS/JS và map 2D
-│   ├── src/                   # HTTP/SSE và biên dịch lộ trình
-│   └── tools/                 # Export map từ dữ liệu Gazebo
-├── simulation/gazebo/         # World, model, mesh, texture campus
-├── scripts/windows/           # CMD chạy, build và kiểm thử
-├── tests/                     # Unit/integration và fixture
-├── tools/                     # Fake peer, replay, sinh mẫu, đóng gói
-├── examples/                  # Source demo parser B
-├── third_party/               # Thư viện đã khóa phiên bản và giấy phép
-├── docs/
-│   ├── guides/                # Hướng dẫn chạy và PX4
-│   ├── design/                # Kiến trúc, giao ước, API, mission, sơ đồ
-│   ├── planning/              # Kế hoạch triển khai
-│   ├── references/            # Đề cương gốc
-│   └── verification/          # Ghi nhận kiểm chứng các phiên bản
-├── .github/workflows/         # CI Windows
-├── CMakeLists.txt
-└── CMakePresets.json
-```
-
-`bin/` là bản chạy. `build/` chứa cache, object, công cụ và executable kiểm thử;
-`output/` chứa dữ liệu kiểm thử/đóng gói tạm. Hai thư mục này chỉ sinh lại khi
-build hoặc dùng công cụ phát triển, không cần để mở gateway/web/console.
-
-Giữ nguyên `contracts.hpp`. Code web nằm riêng trong `web_client/`;
-frontend/config/map cần nằm cùng project khi chạy executable.
-
-## Console và cấu hình
+Cần Windows 64 bit, g++ MinGW-w64 UCRT64, CMake 3.25 trở lên, Ninja và Python
+3.9 trở lên. Đưa các công cụ vào `PATH` rồi mở PowerShell tại gốc repository.
 
 ```powershell
-.\bin\c_client.exe --config config/gateway.mission.example.json --role observer
-.\bin\c_client.exe --config config/gateway.mission.example.json --role controller
+powershell -NoProfile -ExecutionPolicy Bypass -File .\01_Code\scripts\build.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\01_Code\scripts\test.ps1
 ```
 
-Mỗi lệnh dùng cửa sổ riêng. Một controller tối đa: ngắt controller web trước khi
-nối console điều khiển. Lệnh console: `arm`, `disarm`, `takeoff`, `land`, `help`,
-`quit`. `takeoff N` dùng N mét AMSL, không phải tăng thêm N mét.
+Ba chương trình dùng thường nằm trong `01_Code/bin/`. Executable có đo kiểm
+nằm trong `01_Code/build/test_support/bin/`. Bộ CTest chạy với fixture và peer
+giả lập trên localhost. Kết quả của các bài tích hợp được ghi vào
+`01_Code/output/test_results/`.
 
-Cổng mặc định: UDP **14550**, observer **5760**, controller **5761**, HTTP **8080**.
-Cấu hình riêng hiện có được giữ ở `config/px4.local.json`; truyền cùng file config
-cho các chương trình nếu dùng cấu hình riêng.
-
-## Build và kiểm thử
-
-Chạy executable trong `bin/` không cần Python/CMake. Để sửa code và build, cần
-g++ MinGW UCRT64, CMake 3.25+, Ninja; Python 3.9+ cho kiểm thử/công cụ. Thư viện
-C++ đã nằm trong `third_party/`.
+Có thể xem danh sách bài và chạy CTest trực tiếp từ gốc mã nguồn.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test.ps1
+Set-Location .\01_Code
+ctest --preset windows-release -N
+ctest --preset windows-release
 ```
 
-Hoặc nhấp `scripts/windows/BUILD.cmd`, `TEST.cmd`. Test tự build nếu cache chưa có.
-Dừng executable trước khi build đè. Unit/integration dùng localhost giả lập;
-bản thử CSV/metrics riêng ở `build/test_support/bin`, không bật file log trên
-ba chương trình trong `bin/`.
+Xem [hướng dẫn chạy chi tiết](01_Code/docs/guides/running.md) và
+[hướng dẫn đóng gói](01_Code/README.md#github-và-đóng-gói).
 
-`CHAY_DEMO.cmd` là công cụ đo kiểm, sẽ build lại công cụ nếu cần và tạo bằng chứng.
-Chạy thông thường dùng các CMD gateway/web/observer/controller. Demo fake peer
-không cần Ubuntu được mô tả trong hướng dẫn web.
+## Chạy Gateway và web client
 
-## GitHub và đóng gói
-
-Giữ source, cấu hình mẫu, fixture, asset và thư viện trong Git. Không commit
-`bin/`, `build/`, `output/`, cấu hình `*.local.json` hoặc cache. CI build và chạy
-kiểm thử; kết quả PX4/Gazebo thật cần đối chiếu riêng.
+Từ gốc repository, mở mỗi lệnh trong một cửa sổ PowerShell riêng.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package.ps1 -WithBinaries
+& .\01_Code\scripts\windows\CHAY_GATEWAY_MISSION.cmd
 ```
 
-Gói Windows lấy đúng 3 executable từ `bin/` cùng source/config/asset. ZIP và
-checksum sinh vào `build/releases/`. Trong bản giải nén, dùng
-`python -B tools/verify_package.py` để kiểm manifest.
+```powershell
+& .\01_Code\scripts\windows\CHAY_WEB_CLIENT.cmd
+```
 
-## Tài liệu
+Mở `http://127.0.0.1:8080`. Bản đồ có thể mở trước khi nhận dữ liệu PX4.
+Cấu hình mẫu dùng UDP 14550 cho PX4, TCP 5760 cho observer và TCP 5761 cho
+controller. Chỉ một controller hoạt động tại một thời điểm. Gateway, console
+và web client dùng thường hiển thị sự kiện trên màn hình và không ghi log tệp.
 
-Xem [mục lục](docs/README.md), [kiến trúc A/B/C](docs/design/architecture.md) và
-[hướng dẫn web](docs/guides/web-client-running.md).
+Để thử trên một máy Windows với cổng loopback riêng, xem
+[hướng dẫn web với peer giả lập](01_Code/docs/guides/web-client-running.md#2-thử-ngay-tại-windows-bằng-dữ-liệu-giả-lập).
+
+## Kết nối PX4 SITL và Gazebo
+
+Trên Ubuntu, dùng PX4 1.15.4 với Gazebo, model x500 và world `dut_campus`.
+World và model nằm tại `01_Code/simulation/gazebo/`. Cấu hình luồng MAVLink
+UDP từ SITL đến địa chỉ IPv4 của máy Windows đang chạy Gateway, cổng 14550
+theo cấu hình mẫu. Vị trí cài world, model và lệnh chạy có trong
+[hướng dẫn Ubuntu](01_Code/docs/guides/web-client-running.md#ubuntu).
+
+## Nhóm thực hiện
+
+| Thành viên | MSSV |
+|---|---|
+| Phạm Thị Hồng Nhung | 106230021 |
+| Nguyễn Đức Hải | 106230043 |
+| Đinh Tiến Trung | 106230031 |
+
+Giảng viên hướng dẫn là TS. Nguyễn Văn Hiếu.

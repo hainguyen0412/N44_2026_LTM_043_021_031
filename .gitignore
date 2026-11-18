@@ -1,7 +1,7 @@
 # Build products and runtime evidence
-/bin/
-/build/
-/output/
+/01_Code/bin/
+/01_Code/build/
+/01_Code/output/
 *.exe
 *.dll
 *.o
@@ -12,9 +12,9 @@
 *.log
 
 # Machine-specific configuration
-/CMakeUserPresets.json
-/config/*.local.json
-/config/local.json
+/01_Code/CMakeUserPresets.json
+/01_Code/config/*.local.json
+/01_Code/config/local.json
 .env
 .env.*
 !.env.example
@@ -32,8 +32,8 @@ Thumbs.db
 *.drawio.bkp
 
 # Local report copies and generated document exports
-/docs/report/
-/docs/guides/word/
-/docs/design/diagrams/exports_chuong_3_4/
+/01_Code/docs/report/
+/01_Code/docs/guides/word/
+/01_Code/docs/design/diagrams/exports_chuong_3_4/
 *.zip
 *.zip.sha256

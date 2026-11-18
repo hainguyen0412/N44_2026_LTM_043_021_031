@@ -4,7 +4,8 @@ param(
 )
 $ErrorActionPreference='Stop'
 $projectRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$localTools=[IO.Path]::GetFullPath((Join-Path $projectRoot '..\output\tooling\cmake_ninja'))
+$toolingBase=if((Split-Path -Leaf $projectRoot) -eq '01_Code'){Split-Path -Parent $projectRoot}else{$projectRoot}
+$localTools=[IO.Path]::GetFullPath((Join-Path $toolingBase '..\output\tooling\cmake_ninja'))
 if(-not(Get-Command cmake -CommandType Application -ErrorAction SilentlyContinue) -and (Test-Path -LiteralPath "$localTools\cmake\data\bin\cmake.exe")) {
     $env:Path="$localTools\cmake\data\bin;$localTools\bin;C:\msys64\ucrt64\bin;$env:Path"
     $env:PYTHONPATH=$localTools

@@ -15,6 +15,7 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
+        working-directory: 01_Code
     steps:
       - uses: actions/checkout@v7
       - name: Set up MSYS2 UCRT64
@@ -32,7 +33,9 @@ jobs:
       - name: Build
         run: cmake --build --preset windows-release
       - name: Unit and localhost integration tests
-        run: ctest --preset windows-release --output-junit "$PWD/output/test_results/ctest.xml"
+        run: |
+          mkdir -p output/test_results
+          ctest --preset windows-release --output-junit "$PWD/output/test_results/ctest.xml"
       - name: Package source and Windows release
         run: |
           python -B tools/package_release.py
@@ -46,5 +49,5 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
           path: |
-            build/windows-release/Testing/
-            output/test_results/
+            01_Code/build/windows-release/Testing/
+            01_Code/output/test_results/

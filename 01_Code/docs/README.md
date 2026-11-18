@@ -4,7 +4,8 @@
 - **design/**: kiến trúc A/B/C, giao ước, API, map, mission; sơ đồ ở design/diagrams.
 - **planning/**: kế hoạch triển khai và các bước chờ xác minh trên Ubuntu.
 - **references/**: đề cương gốc.
-- **verification/**: ghi nhận kiểm chứng các phiên bản, không phải log runtime.
+
+Các bản ghi kiểm chứng nằm tại `03_Phu_luc/Ket_qua_kiem_thu/` từ gốc repository.
 
 Điểm bắt đầu:
 
