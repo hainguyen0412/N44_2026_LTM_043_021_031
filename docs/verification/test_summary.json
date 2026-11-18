@@ -1,89 +1,110 @@
 {
-  "verified_at": "2026-11-13T19:56:01.930464+07:00",
-  "platform": "Windows x64 / MSYS2 UCRT64",
-  "compiler": "GCC 16.1.0",
-  "cmake": "3.31.10",
+  "project": "Project_CK_LTM_v1",
+  "layout": "apps/include/src/tests/tools/scripts/third_party/docs",
+  "verified_at": "2026-11-13T08:39:54.961542+07:00",
+  "platform": "Windows-11-10.0.26200-SP0",
   "python": "3.14.2",
-  "passed": 18,
-  "failed": 0,
-  "source_sha256": "b56aef3b968c56fad3acd2a265a9fd4af5d75f0edf341062c0783e457ea577dd",
-  "contracts_sha256": "c58fed5058181115e15dfe3066c166959ecd836d74d951f69905b338fea821f1",
-  "px4_sitl_tested": false,
-  "tests": [
-    {
-      "name": "fixture_verification",
-      "seconds": 0.0710844
+  "compiler": "g++ (Rev5, Built by MSYS2 project) 16.1.0",
+  "cmake": "3.31.10",
+  "ninja": "1.13.0",
+  "ctest_unique_tests_verified": 15,
+  "initial_full_suite": {
+    "passed": 14,
+    "total": 15,
+    "failure": "fixture oracle used cwd for upstream metadata"
+  },
+  "fix_validation": {
+    "fixture_test_rerun_passed": true,
+    "fresh_git_source_unit_tests_passed": 6
+  },
+  "github_actions_executed": false,
+  "px4_sitl_executed": false,
+  "source_checkout_build_passed": true,
+  "source_checkout_path_with_spaces": true,
+  "git_audit": {
+    "passed": true,
+    "tracked_files": 363,
+    "fixture_preserved": true,
+    "contracts_preserved": true,
+    "github_workflow_included": true,
+    "generated_files_tracked": false
+  },
+  "launchers": {
+    "passed": true,
+    "modes": [
+      "B0",
+      "B2"
+    ],
+    "external_cwd": true,
+    "path_with_spaces": true,
+    "vendored_bytes_preserved": true,
+    "demo_count": 2
+  },
+  "network_tests": {
+    "command_retry": {
+      "passed": 4,
+      "total": 4
     },
-    {
-      "name": "config_tests",
-      "seconds": 0.383478
+    "command_ack": {
+      "passed": 48,
+      "total": 48
     },
-    {
-      "name": "network_primitives_tests",
-      "seconds": 0.0398963
+    "client_config": {
+      "passed": 31,
+      "total": 31
     },
-    {
-      "name": "b_tests",
-      "seconds": 0.144779
+    "fake_gateway": {
+      "passed": 22,
+      "total": 22
     },
-    {
-      "name": "a_tests",
-      "seconds": 0.0251522
+    "client_metrics": {
+      "passed": 10,
+      "total": 10
     },
-    {
-      "name": "c_tests",
-      "seconds": 0.152451
+    "gateway": {
+      "passed": 7,
+      "total": 7
     },
-    {
-      "name": "metrics_tests",
-      "seconds": 0.142338
+    "abc_B0": {
+      "passed": true,
+      "downlink_frames": 129,
+      "commands": [
+        400,
+        22,
+        21
+      ]
     },
-    {
-      "name": "send_queue_tests",
-      "seconds": 1.0813
+    "abc_B1": {
+      "passed": true,
+      "downlink_frames": 130,
+      "commands": [
+        400,
+        22,
+        21
+      ]
     },
-    {
-      "name": "gateway_integration",
-      "seconds": 15.1633
-    },
-    {
-      "name": "abc_transport_integration",
-      "seconds": 2.31536
-    },
-    {
-      "name": "command_retry_integration",
-      "seconds": 14.1332
-    },
-    {
-      "name": "command_ack_integration",
-      "seconds": 48.3971
-    },
-    {
-      "name": "client_config_integration",
-      "seconds": 6.64589
-    },
-    {
-      "name": "fake_gateway_integration",
-      "seconds": 46.63
-    },
-    {
-      "name": "client_metrics_integration",
-      "seconds": 14.0604
-    },
-    {
-      "name": "abc_B0",
-      "seconds": 4.77736
-    },
-    {
-      "name": "abc_B1",
-      "seconds": 4.73624
-    },
-    {
-      "name": "abc_B2",
-      "seconds": 4.79336
+    "abc_B2": {
+      "passed": true,
+      "downlink_frames": 127,
+      "commands": [
+        400,
+        22,
+        21
+      ]
     }
-  ],
-  "rerun_after_test_adapter_update": [
-    "fake_gateway_integration"
-  ]
+  },
+  "shared_contracts_sha256": "c58fed5058181115e15dfe3066c166959ecd836d74d951f69905b338fea821f1",
+  "binary_sha256": {
+    "a_tests.exe": "48a11628dcaa861389bb54e7de1ba214859ddca50753c9da1f651eafcd7889bf",
+    "b_demo.exe": "7ab252e9997cdd7540248638bdf808e71fcac3c717c428dafc228d4f1eed7006",
+    "b_tests.exe": "cc621ad6de4067de23cef888c160ef747276bc456ef12ec769e158e9f27d2e89",
+    "c_client.exe": "9ee2144a2b4ce30b477c8d702496693ea930907507e3ac79b167443d98994595",
+    "c_tests.exe": "aff9452b9b9c1a49caa27bab97acc38ab56666f11108e22dc96e0d0dd9b66495",
+    "fake_gateway.exe": "6a32ada3096c60b47dfa113b3f05e059dbb719f009f60fb9213f0b50bbe0c4e9",
+    "fixture_generator.exe": "627f8a415806e54257adddb1f9104e67326e0e0d669865c8244dfe5e1d57f387",
+    "gateway.exe": "8e7cd89ec39b6e80857a3ad90f1268585dbdee1625ddb1f15051aa692e76142a",
+    "metrics_tests.exe": "b076f1018482f8b9e15aa888a007e4106d66c5f77c717540406ee6111fbbf8b0",
+    "replay_udp.exe": "9f85f22936be289191da8c5f8aafb9cc87d481c19cb4b279cf8a3350ec4c505e",
+    "send_queue_tests.exe": "6fa97fa92bccb86f52491a68f9f2367f7d650dae5276b7a583d7dafaaad76c61"
+  }
 }

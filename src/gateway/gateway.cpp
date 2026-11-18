@@ -1,4 +1,6 @@
 #include "gateway.hpp"
+#include "mavlink_gateway/mission.hpp"
+#include <cmath>
 #include <nlohmann/json.hpp>
 #include <windows.h>
 #include <psapi.h>
@@ -37,7 +39,7 @@ void Gateway::event(const std::string& name, const std::string& detail, const So
 }
 void Gateway::guard(const std::string& name, const std::function<void()>& fn) {
     try { fn(); }
-    catch (const std::exception& e) { event("worker_error", name + ": " + e.what()); failed_ = true; stop_input_ = true; }
+    catch (const std::exception& e) { std::cerr<<name<<": "<<e.what()<<std::endl; event("worker_error", name + ": " + e.what()); failed_ = true; stop_input_ = true; }
     catch (...) { event("worker_error", name + ": unknown exception"); failed_ = true; stop_input_ = true; }
 }
 bool Gateway::in_window(MonoNs ns) const {
@@ -208,12 +210,15 @@ void Gateway::accept_clients(ClientRole role) {
         if (c_.socket_send_buffer_bytes)
             setsockopt(socket.get(), SOL_SOCKET, SO_SNDBUF, reinterpret_cast<const char*>(&c_.socket_send_buffer_bytes), sizeof(int));
         std::lock_guard<std::mutex> lock(sessions_mutex_);
-        const auto count = std::count_if(sessions_.begin(), sessions_.end(), [role](const auto& s) { return s->role == role; });
+        const auto count = std::count_if(sessions_.begin(), sessions_.end(), [role](const auto& s) {
+            return s->role == role && s->reason == CloseReason::None;
+        });
         if (count >= static_cast<long long>(role == ClientRole::Observer ? c_.max_observers : 1)) {
             event(role == ClientRole::Observer ? "observer_limit" : "controller_busy", key(endpoint(peer))); continue;
         }
         SourceRef source{next_source_++, next_session_++, Transport::Tcp, Flow::ControlUplink, endpoint(peer)};
         auto s = std::make_shared<Session>(source, role, std::move(socket), c_);
+        if(role==ClientRole::Controller)active_controller_=source.session_id;
         sessions_.push_back(s);
         max_clients_ = std::max<std::uint64_t>(max_clients_, sessions_.size());
         event("client_connected", role == ClientRole::Observer ? "observer" : "controller", source);
@@ -227,6 +232,7 @@ void Gateway::accept_clients(ClientRole role) {
 void Gateway::close_session(const std::shared_ptr<Session>& s, CloseReason reason) {
     auto expected = CloseReason::None;
     if (!s->reason.compare_exchange_strong(expected, reason)) return;
+    if(s->role==ClientRole::Controller){auto id=s->source.session_id;active_controller_.compare_exchange_strong(id,0);}
     s->outbound.close();
     shutdown(s->socket.get(), SD_BOTH); // Handle itself remains valid until both workers join.
     std::string why;
@@ -289,7 +295,24 @@ void Gateway::receive_client(const std::shared_ptr<Session>& s) {
                     const auto command = byte(f, 28) | (byte(f, 29) << 8);
                     if (std::find(c_.allowed_commands.begin(),c_.allowed_commands.end(),command)==c_.allowed_commands.end()) { event("uplink_not_allowed", "command=" + str(command), s->source); continue; }
                     if (byte(f, 30) != c_.px4_sysid || byte(f, 31) != c_.px4_compid) { event("target_mismatch", "COMMAND_LONG", s->source); continue; }
-                } else if (f.header.msgid != 0) { event("uplink_not_allowed", "msgid=" + str(f.header.msgid), s->source); continue; }
+                } else if (f.header.msgid != 0) {
+                    const auto id=f.header.msgid;
+                    if(!c_.mission_enabled||(id!=43&&id!=44&&id!=47&&id!=51&&id!=73)){
+                        event("uplink_not_allowed","msgid="+str(id),s->source);continue;
+                    }
+                    const auto p=decode_mission(f);
+                    if(!p||p->mission_type!=0||p->target_system!=c_.px4_sysid||p->target_component!=c_.px4_compid){
+                        event("target_mismatch","mission",s->source);continue;
+                    }
+                    bool valid=true;
+                    if(id==44)valid=p->count>=3&&p->count<=c_.mission_max_items;
+                    if(id==51)valid=p->seq<c_.mission_max_items;
+                    if(id==47)valid=p->result==0;
+                    if(id==73){const auto& v=p->item;valid=v.seq<c_.mission_max_items&&v.frame==6&&v.autocontinue==1&&
+                        (v.command==16||v.command==21||v.command==22)&&std::isfinite(v.altitude)&&v.altitude>=0&&v.altitude<=100&&
+                        std::abs(static_cast<long long>(v.latitude_e7))<=900000000LL&&std::abs(static_cast<long long>(v.longitude_e7))<=1800000000LL;}
+                    if(!valid){event("uplink_not_allowed","invalid mission fields",s->source);continue;}
+                }
                 if (!uplink_.try_push(std::make_shared<const FrameRecord>(std::move(f)))) event("udp_uplink_queue_full", "frame dropped", s->source);
             }
             if (batch.close_tcp_session) { close_session(s, CloseReason::ParserLimit); break; }
@@ -328,6 +351,7 @@ void Gateway::send_udp() {
     SharedFrame f;
     while (!uplink_.closed() || uplink_.size()) {
         if (!uplink_.pop(f)) continue;
+        if(f->source.session_id!=active_controller_.load()){event("uplink_session_closed","queued frame discarded",f->source);continue;}
         Endpoint peer; std::string error;
         if (!px4_ready(peer, error)) { event(error, "queued uplink dropped", f->source); continue; }
         auto addr = address(peer);
@@ -406,6 +430,7 @@ void Gateway::stop() {
     audit_.close(); write_final();
 }
 void Gateway::write_final() {
+    if(!c_.logging_enabled)return;
     nlohmann::json j;
     j["schema_version"] = 1; j["run_id"] = c_.run_id; j["component"] = "gateway";
     j["started_at_iso8601"] = utc_now();

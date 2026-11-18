@@ -53,7 +53,7 @@ public:
     // >0: so byte nhan; 0: ben kia dong; <0: loi.
     long recv_some(std::uint8_t* buf, std::size_t len);
 
-    static Socket tcp_connect(const std::string& host, int port, std::string* error);
+    static Socket tcp_connect(const std::string& host, int port, std::string* error, int timeout_ms = 3000);
     static Socket tcp_listen(int port, std::string* error);
     Socket accept_client(std::string* peer, std::string* error);
 

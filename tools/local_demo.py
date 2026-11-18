@@ -5,6 +5,7 @@ All children belong to this invocation; existing user processes are left alone.
 """
 import argparse
 import csv
+import io
 import json
 from pathlib import Path
 import socket
@@ -49,8 +50,14 @@ def split(data):
 def rows(path):
     if not path.exists():
         return []
-    with path.open(encoding='utf-8', newline='') as stream:
-        return list(csv.DictReader(stream))
+    # Poll only complete lines from a snapshot. The logger may currently be
+    # writing its header; treating that prefix as a header corrupts field names.
+    data = path.read_bytes()
+    end = data.rfind(b'\n')
+    if end < 0:
+        return []
+    reader = csv.DictReader(io.StringIO(data[:end + 1].decode('utf-8'), newline=''))
+    return [row for row in reader if None not in row and all(v is not None for v in row.values())]
 
 
 def wait_for(predicate, children, timeout=8):
@@ -159,18 +166,18 @@ def main():
 
     try:
         common = ['--config', str(config_path), '--run-id', run_id]
-        start('gateway', [str(ROOT / 'build/bin/gateway.exe'), *common, '--stop-file', str(stop_file)])
+        start('gateway', [str(ROOT / 'build/test_support/bin/gateway.exe'), *common, '--stop-file', str(stop_file)])
         wait_for(lambda: 'READY' in (output/'gateway.log').read_text(errors='replace'), children)
         for number in range(1, args.observers+1):
-            start(f'observer_{number:02d}', [str(ROOT/'build/bin/c_client.exe'), *common, '--role', 'observer', '--name', f'observer_{number:02d}'])
-        controller = start('controller', [str(ROOT/'build/bin/c_client.exe'), *common, '--role', 'controller'])
+            start(f'observer_{number:02d}', [str(ROOT/'build/test_support/bin/c_client.exe'), *common, '--role', 'observer', '--name', f'observer_{number:02d}'])
+        controller = start('controller', [str(ROOT/'build/test_support/bin/c_client.exe'), *common, '--role', 'controller'])
         gateway_log = output/'runs'/run_id/'gateway'
         wait_for(lambda: sum(row['event']=='client_connected' for row in rows(gateway_log/'events.csv')) == args.observers+1, children)
         simulator = UdpSimulator(udp, 50); simulator.thread.start()
         started = time.monotonic()
         wait_for(lambda: any(row['event']=='px4_locked' for row in rows(gateway_log/'events.csv')), children)
         command_log = output/'runs'/run_id/'controller'/'commands.csv'
-        for number, command in enumerate(('arm', 'takeoff 5', 'land'), 1):
+        for number, command in enumerate(('arm', 'takeoff', 'land'), 1):
             controller.stdin.write((command+'\n').encode()); controller.stdin.flush()
             wait_for(lambda: sum(row['event']=='ack_accepted' for row in rows(command_log)) >= number, children)
         wait_for(lambda: time.monotonic()-started >= args.seconds, children, timeout=args.seconds+2)

@@ -109,7 +109,7 @@ class Run:
         self.path = self.directory / 'config.json'
         self.path.write_text(json.dumps(self.config, indent=2), encoding='utf-8')
         self.log = (self.directory / 'console.log').open('w', encoding='utf-8')
-        args = [str(SHARED_ROOT / 'build/bin/gateway.exe'), '--config', str(self.path), '--run-id', name, '--stop-file', str(self.stop_file)]
+        args = [str(SHARED_ROOT / 'build/test_support/bin/gateway.exe'), '--config', str(self.path), '--run-id', name, '--stop-file', str(self.stop_file)]
         for key, value in runtime.items():
             args += [key, str(value)]
         self.proc = subprocess.Popen(args, cwd=ROOT, stdout=self.log, stderr=subprocess.STDOUT)
@@ -419,7 +419,7 @@ def invalid_config(suite):
     for i, (text, label) in enumerate(cases):
         path = suite / f'invalid_{i}.json'
         path.write_text(text, encoding='utf-8')
-        result = subprocess.run([str(SHARED_ROOT / 'build/bin/gateway.exe'), '--config', str(path)], capture_output=True, text=True, timeout=5)
+        result = subprocess.run([str(SHARED_ROOT / 'build/test_support/bin/gateway.exe'), '--config', str(path)], capture_output=True, text=True, timeout=5)
         assert result.returncode != 0, label
         (suite / f'invalid_{i}.log').write_text(result.stdout + result.stderr, encoding='utf-8')
     return {'cases': [label for _, label in cases]}

@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-16",
+  "scope": "Windows localhost protocol; no real PX4 flight",
+  "full_suite": {
+    "file": "output/test_results/web_release_final.xml",
+    "name": "(empty)",
+    "tests": "20",
+    "failures": "0",
+    "disabled": "0",
+    "skipped": "0",
+    "hostname": "",
+    "time": "185",
+    "timestamp": "2026-11-16T18:05:55",
+    "test_cases": [
+      "mission_tests",
+      "map_tests",
+      "mission_config",
+      "fixture_verification",
+      "b_tests",
+      "a_tests",
+      "c_tests",
+      "metrics_tests",
+      "send_queue_tests",
+      "gateway_integration",
+      "web_mission_integration",
+      "command_retry_integration",
+      "command_ack_integration",
+      "client_config_integration",
+      "fake_gateway_integration",
+      "client_metrics_integration",
+      "control_params_integration",
+      "abc_B0",
+      "abc_B1",
+      "abc_B2"
+    ]
+  },
+  "after_frontend_change": {
+    "file": "output/test_results/web_asset_final.xml",
+    "name": "(empty)",
+    "tests": "2",
+    "failures": "0",
+    "disabled": "0",
+    "skipped": "0",
+    "hostname": "",
+    "time": "25",
+    "timestamp": "2026-11-16T20:01:38",
+    "test_cases": [
+      "web_mission_integration",
+      "client_config_integration"
+    ]
+  },
+  "mission_evidence": "output/test_results/web_mission_integration_1794834098490119500/results.json",
+  "mission_cases": {
+    "happy": true,
+    "retry_request": true,
+    "retry_ack": true,
+    "wrong_target": true,
+    "readback_mismatch": true,
+    "px4_rejected": true,
+    "mission_timeout": true,
+    "gateway_permissions": true,
+    "mission_disabled": true,
+    "lost_start_ack": true,
+    "arm_during_upload": true
+  },
+  "toolchain": {
+    "compiler": "MinGW UCRT64 GCC 16.1.0",
+    "cmake": "4.4.5",
+    "ninja": "1.13.2"
+  },
+  "source_sha256": "44aa9616e52935d96b6056c6a6a7142c1997976d2fa0db957069fbea205bbef4",
+  "contracts_sha256": "c58fed5058181115e15dfe3066c166959ecd836d74d951f69905b338fea821f1",
+  "binary_sha256": {
+    "gateway.exe": "1c4cffa214edc682c9ca6ee01c7f9e43ba2eadef20de830353c2c7c46257efc9",
+    "c_client.exe": "cc08731c7843c4d5f21c1e04d5deaad728b1d89c00de9e559ba1c60d9166d2bc",
+    "web_client.exe": "8f5beece6a07257b5b6a9ba52f4b182087f1090e02b9e5dd9b1df41645a30787"
+  },
+  "map_version": "aa6af413743f355b4155fce61c053ea48c991a36c245825f4933c4394cf87803",
+  "clean_source_build": {
+    "passed": true,
+    "path": "../output/package_checks/Clean source with spaces/Project_CK_LTM_v1",
+    "BUILD_TESTING": false,
+    "runtime_targets": 7
+  },
+  "package_candidate_check": {
+    "archive": "D:\\BK_subjects\\Nam_4_ki_1\\LT_mang\\du_an_cuoi_ki\\Project_CK_LTM_v1\\output\\package_candidates\\Project_CK_LTM_v1-windows-20261116_200232_997555.zip",
+    "sha256": "d3e894064948cd43d94b57385e9d5b095a80824918b117db845bd5c630aeb5c1",
+    "unpacked_root": "D:\\BK_subjects\\Nam_4_ki_1\\LT_mang\\du_an_cuoi_ki\\Project_CK_LTM_v1\\output\\package_checks\\Windows release with spaces\\Project_CK_LTM_v1",
+    "manifest": "passed",
+    "assets_http": "passed",
+    "no_automatic_tcp": "passed",
+    "shutdown": "passed",
+    "browser_visual_review": "not_run"
+  },
+  "docx_review": {
+    "pages": 4,
+    "renderer": "Microsoft Word PDF export; packaged renderer unavailable because LibreOffice absent",
+    "all_pages_inspected": true
+  },
+  "not_run": [
+    "browser interaction/visual QA",
+    "PX4 1.15.4 Gazebo real flight",
+    "GitHub Actions",
+    "web performance benchmark"
+  ]
+}

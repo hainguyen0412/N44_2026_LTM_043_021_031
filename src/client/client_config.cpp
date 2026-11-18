@@ -1,6 +1,7 @@
 #include "client_config.hpp"
 #include <nlohmann/json.hpp>
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <map>
 #include <set>
@@ -51,7 +52,7 @@ fs::path project_root(const char* argv0, const fs::path& config) {
 }
 } // namespace
 
-ClientOptions load_client_options(int argc, char** argv) {
+ClientOptions load_client_options(int argc, char** argv, bool test_file_logging) {
     ClientOptions options;
     std::map<std::string, std::string> cli;
     const std::set<std::string> valued{
@@ -139,9 +140,11 @@ ClientOptions load_client_options(int argc, char** argv) {
     if (cli.count("--run-id")) { options.run_id = cli.at("--run-id"); identifier(options.run_id, "--run-id"); }
     options.name = cli.count("--name") ? cli.at("--name") : options.controller ? "controller" : "observer_01";
     identifier(options.name, "--name");
-    bool logging_enabled = !options.run_id.empty();
+    options.shared.logging_enabled=test_file_logging&&!options.run_id.empty();
+    bool logging_enabled = options.shared.logging_enabled;
 #ifdef C_NO_LOGGER
     logging_enabled = false;
+    options.shared.logging_enabled = false;
 #endif
 
     Json effective{

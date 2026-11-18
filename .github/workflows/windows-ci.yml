@@ -32,7 +32,12 @@ jobs:
       - name: Build
         run: cmake --build --preset windows-release
       - name: Unit and localhost integration tests
-        run: ctest --preset windows-release
+        run: ctest --preset windows-release --output-junit "$PWD/output/test_results/ctest.xml"
+      - name: Package source and Windows release
+        run: |
+          python -B tools/package_release.py
+          python -B tools/package_release.py --with-binaries
+          python -B -c "from pathlib import Path; import subprocess,sys; z=max(Path('build/releases').glob('*-windows-*.zip')); subprocess.run([sys.executable,'-B','tools/release_smoke.py',str(z),'--destination','output/release check with spaces'],check=True)"
       - name: Keep test evidence
         if: always()
         uses: actions/upload-artifact@v7

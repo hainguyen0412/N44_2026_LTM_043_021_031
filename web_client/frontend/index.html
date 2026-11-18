@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MAVLink — DUT Campus</title><link rel="stylesheet" href="/styles.css"></head><body>
+<div id="ltm-mission-layout" aria-label="Client MAVLink campus DUT">
+  <div class="mc-shell">
+    <header class="mc-head"><div class="mc-brand"><span class="mc-brand-icon"><i data-lucide="radio-tower" aria-hidden="true"></i></span><div><h2>MAVLink Ground Station</h2><p class="mc-small">DUT campus · Client local</p></div></div><span class="mc-preview">LOCAL · MAVLink 2</span></header>
+    <div class="mc-toolbar"><span class="mc-status" id="mc-gateway-status">○ Gateway chưa kết nối</span><span class="mc-status" id="mc-px4-status">○ Chưa có heartbeat PX4</span><span class="mc-small">World dut_campus · B2</span><button class="mc-button" id="mc-connect" type="button">Kết nối</button><label class="mc-role">Vai trò <select id="mc-role"><option value="controller">Controller</option><option value="observer">Observer</option></select></label></div>
+    <div class="mc-body">
+      <div class="mc-left">
+        <section class="mc-map-section" aria-label="Vùng bản đồ chọn điểm bay">
+          <div class="mc-mapbar"><div class="mc-map-title"><h3>Campus DUT · nhìn từ trên xuống</h3><span class="mc-small" id="mc-route-count">4 waypoint · Cất cánh → Hạ cánh tại Home</span></div><button class="mc-button" type="button" id="mc-add" aria-pressed="false"><i data-lucide="map-pin-plus" aria-hidden="true"></i>Thêm điểm</button></div>
+          <div class="mc-map-wrap" id="mc-map-viewport"><div class="mc-map" id="mc-map" data-adding="false" aria-label="Bản đồ 2D lấy từ dữ liệu mô hình campus DUT, phía trên hướng Bắc; Home đặt tại cổng">
+            <svg class="mc-basemap" id="mc-basemap" viewBox="0 0 257 300" role="img" aria-label="22 tòa nhà, bốn tuyến đường và hình chiếu tán cây từ campus.dae"></svg>
+            <div id="mc-campus-labels"></div>
+            <svg class="mc-route" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Lộ trình waypoint"><polyline id="mc-route-line" points=""></polyline></svg>
+            <span class="mc-marker mc-home" style="left:79.7665%;top:96%" aria-label="Home tại cổng, gốc tọa độ mô hình">H</span>
+            <span class="mc-home-label">Cổng · Home</span>
+            <div id="mc-markers"></div>
+            <span class="mc-drone" id="mc-drone" hidden style="left:79.7665%;top:96%" aria-label="Vị trí drone PX4"><i data-lucide="drone" aria-hidden="true"></i></span>
+            <span class="mc-scale"><span>50 m</span><span class="mc-scale-line"></span></span>
+          </div></div>
+          <div class="mc-map-legend"><span>↑ Bắc · H: Home · Số: waypoint</span><span class="mc-distance" id="mc-distance"></span><span id="mc-map-mode">Chọn điểm để sửa</span><div class="mc-map-tools" aria-label="Thu phóng bản đồ"><button class="mc-mini" id="mc-zoom-out" type="button" aria-label="Thu nhỏ bản đồ">−</button><button class="mc-mini" id="mc-zoom-reset" type="button" aria-label="Đặt lại góc nhìn">100%</button><button class="mc-mini" id="mc-zoom-in" type="button" aria-label="Phóng to bản đồ">+</button></div></div>
+          <div class="mc-map-note" id="mc-map-note" aria-live="polite">Bật “Thêm điểm” rồi click; kéo waypoint để đổi vị trí.</div>
+        </section>
+        <section class="mc-telemetry" aria-label="Telemetry PX4"><div class="mc-stat"><span class="mc-small">Pin</span><span class="mc-number"><span id="mc-battery">—</span> <small>%</small></span><span class="mc-small" id="mc-voltage">— V</span></div><div class="mc-stat"><span class="mc-small">Cao so với Home</span><span class="mc-number"><span id="mc-height">—</span> <small>m</small></span><span class="mc-small">Từ telemetry</span></div><div class="mc-stat"><span class="mc-small">Trạng thái</span><span class="mc-number" style="font-size:15px" id="mc-flight-state">—</span><span class="mc-small" id="mc-flight-mode">Chưa chạy mission</span></div></section>
+        <div class="mc-flight-strip"><span id="mc-attitude">Chưa có ATTITUDE</span><span id="mc-heartbeat-age">Chưa có heartbeat</span></div>
+      </div>
+      <aside class="mc-sidebar" aria-label="Lập lộ trình và điều khiển">
+        <div class="mc-tabs" role="tablist" aria-label="Chức năng client"><button class="mc-tab" id="mc-tab-mission" type="button" role="tab" aria-selected="true" aria-controls="mc-mission-pane">Lập lộ trình</button><button class="mc-tab" id="mc-tab-control" type="button" role="tab" aria-selected="false" aria-controls="mc-control-pane">Điều khiển</button></div>
+        <section class="mc-pane" id="mc-mission-pane" role="tabpanel" aria-labelledby="mc-tab-mission">
+          <div class="mc-pane-top"><h3>Mission campus</h3><span class="mc-badge" id="mc-draft-badge">Bản nháp</span></div>
+          <ol class="mc-items" id="mc-items"></ol>
+          <div class="mc-action-row"><button class="mc-button" id="mc-open" type="button">Mở JSON</button><button class="mc-button" id="mc-readback" type="button">Đọc lại PX4</button></div><input id="mc-file" type="file" accept="application/json,.json" hidden><div class="mc-editor" id="mc-editor"><div class="mc-editor-head"><h3 id="mc-edit-title">Sửa điểm 1</h3><div class="mc-tools"><button class="mc-mini" id="mc-up" type="button" aria-label="Đưa waypoint lên trước">↑</button><button class="mc-mini" id="mc-down" type="button" aria-label="Đưa waypoint xuống sau">↓</button><button class="mc-mini" id="mc-delete" type="button">Xóa</button></div></div><span class="mc-coordinate" id="mc-coordinate">E 0 m · N 72 m so với cổng</span><div class="mc-input-row"><label class="mc-field">Cao so với Home (m)<input id="mc-alt" type="number" min="2" max="100" step="1" value="10"></label><label class="mc-field">Dừng tại điểm (giây)<input id="mc-hold" type="number" min="0" max="60" step="1" value="0"></label></div></div>
+          <label class="mc-field">Độ cao cất cánh mission (m so với Home)<input id="mc-takeoff-alt" type="number" min="2" max="100" step="1" value="10"></label><div class="mc-footer-actions"><div class="mc-action-row"><button class="mc-button" id="mc-save" type="button">Lưu JSON</button><button class="mc-button" id="mc-upload" type="button"><i data-lucide="upload" aria-hidden="true"></i>Tải lên PX4</button></div><button class="mc-button mc-button-primary" type="button" id="mc-start" disabled><i data-lucide="play" aria-hidden="true"></i>Bắt đầu mission</button><div class="mc-result" id="mc-mission-result" aria-live="polite">Chưa tải mission lên PX4.</div></div>
+        </section>
+        <section class="mc-pane" id="mc-control-pane" role="tabpanel" aria-labelledby="mc-tab-control" hidden>
+          <div class="mc-pane-top"><h3>Lệnh điều khiển</h3><span class="mc-badge">Lệnh thật qua gateway</span></div>
+          <div class="mc-command-grid"><button class="mc-button mc-button-primary" data-cmd="ARM" type="button">ARM</button><button class="mc-button mc-button-danger" data-cmd="DISARM" type="button">DISARM</button><button class="mc-button" data-cmd="TAKEOFF" type="button">Cất cánh</button><button class="mc-button" data-cmd="LAND" type="button">Hạ cánh</button></div>
+          <p class="mc-small">Cất cánh riêng: dùng MIS_TAKEOFF_ALT của PX4. Mission: dùng độ cao đã đặt cho từng mục.</p>
+          <div class="mc-control-state"><span class="mc-small">Trạng thái drone</span><span id="mc-control-armed">—</span></div>
+          <div><h3>Lệnh gần nhất</h3><p class="mc-small" id="mc-command-result" aria-live="polite">Chưa gửi lệnh.</p></div>
+          <p class="mc-small">Hiển thị riêng ACK lệnh và trạng thái drone từ telemetry.</p>
+        </section>
+        <div class="mc-confirm" id="mc-confirm" hidden><h3 id="mc-confirm-title">Xác nhận lệnh</h3><p class="mc-small" id="mc-confirm-text"></p><button class="mc-button mc-button-primary" id="mc-confirm-yes" type="button">Xác nhận</button><button class="mc-button" id="mc-confirm-no" type="button">Hủy</button></div>
+      </aside>
+    </div>
+    <section class="mc-log" aria-label="Nhật ký client"><div class="mc-log-head"><h3>Nhật ký phiên</h3><span class="mc-small">Lệnh · Mission · Kết nối</span></div><ul class="mc-events" id="mc-events"></ul></section>
+    <footer class="mc-bottom"><span id="mc-log-directory">Ghi log file mặc định tắt.</span><span>Map: gen_campus_v2.py + campus.dae · 385,5 × 450 m</span></footer>
+  </div>
+</div>
+<script src="/app.js" defer></script></body></html>

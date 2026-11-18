@@ -7,7 +7,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIRECTORIES = {'apps', 'include', 'src', 'config', 'tests', 'tools', 'examples',
-                      'scripts', 'third_party', 'docs', '.github'}
+                      'scripts', 'third_party', 'docs', '.github', 'web_client', 'simulation'}
 SOURCE_ROOT_FILES = {'README.md', 'CMakeLists.txt', 'CMakePresets.json', '.gitignore', '.gitattributes'}
 
 
@@ -38,10 +38,10 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     files = list(source_files())
     if args.with_binaries:
-        binaries = sorted((ROOT/'build/bin').glob('*.exe'))
-        expected = {'gateway.exe', 'c_client.exe', 'fake_gateway.exe', 'replay_udp.exe', 'b_demo.exe', 'fixture_generator.exe'}
+        expected = {'gateway.exe', 'c_client.exe', 'web_client.exe'}
+        binaries = sorted(file for file in (ROOT/'bin').glob('*.exe') if file.name in expected)
         if not expected.issubset({file.name for file in binaries}):
-            parser.error('Missing executables in build/bin; build the project first')
+            parser.error('Missing executables in bin; build the project first')
         files += binaries
     kind = 'windows' if args.with_binaries else 'source'
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
