@@ -40,3 +40,45 @@ Gateway hiện dùng Winsock và Windows process metrics. Preset hỗ trợ Wind
 ## Đầu vào và dữ liệu sinh ra
 
 Mã nguồn, fixture, cấu hình mẫu, sơ đồ và tài liệu là đầu vào trong Git. `build` chứa cache, thư viện và executable; `output` chứa log và bằng chứng chạy. Cấu hình riêng của máy dùng `config/*.local.json`. Các dữ liệu sinh ra và cấu hình riêng được Git bỏ qua.
+
+## Web client và mission
+
+```mermaid
+flowchart LR
+    Browser[Web HTML/CSS/JS local] <-->|HTTP JSON + SSE| Web[web_client: HTTP và quyền tab]
+    Web --> Runtime[ClientRuntime + CommandManager + MissionManager]
+    Runtime <-->|TCP MAVLink 2| Gateway[gateway: whitelist / queue / phiên]
+    Gateway <-->|UDP MAVLink 2| PX4[PX4 + Gazebo trên Ubuntu]
+    Campus[Map JSON + SVG từ dữ liệu campus] --> Browser
+    Campus --> Compiler[CampusMap: ENU/WGS84 và kiểm mission]
+    Web --> Compiler
+    Compiler --> Runtime
+```
+
+`web_client/` tách riêng frontend, HTTP backend, map compiler và exporter. Runtime
+C++ nằm ở `src/client`, dùng chung parser, builder, command manager, send queue và
+logger. Console hiện giữ vòng lặp nhập/nhận riêng; chưa chuyển toàn bộ
+`apps/client_main.cpp` sang ClientRuntime để hạn chế phạm vi thay đổi CLI.
+
+Uplink bổ sung mission chỉ khi schema 2 bật chức năng. Không sửa `contracts.hpp`;
+Home, landed state và mission dùng kiểu/decoder mở rộng riêng. Server web chỉ
+bind loopback, một tab giữ quyền điều khiển, các tab khác đọc snapshot. Browser
+không phát raw MAVLink hoặc ghi stdin của console.
+
+Xem [API](web-api.md), [mission](mission-protocol.md), [map](campus-map.md) và
+[hướng dẫn chạy](../guides/web-client-running.md). Kết quả local cùng phần chưa kiểm chứng
+được ghi trong [báo cáo web](../verification/web-client-results.md).
+
+## Chính sách file log của bản chạy thường
+
+Gateway, web và console đã tắt ghi log file; không có tham số runtime bật lại.
+UI vẫn giữ sự kiện gần đây trong bộ nhớ và hiển thị ACK/lỗi/tiến độ. Parser,
+Inspector, định tuyến và mission không phụ thuộc vào việc có file log.
+
+CsvLogger của phần B được giữ làm thư viện và có unit test. Với BUILD_TESTING,
+CMake tạo gateway/client đo kiểm riêng trong build/test_support/bin. Các bài
+kiểm thử metrics/CSV cũ dùng hai executable này; gói Windows chỉ lấy executable
+trong bin. Test logging_integration dùng chính gateway/web/console phát
+hành để xác nhận không có thư mục log ngay cả sau telemetry, upload, ARM và
+shutdown. Việc chạy bộ test có thể tạo bằng chứng test; mở web chạy thường
+không tạo các file đó.

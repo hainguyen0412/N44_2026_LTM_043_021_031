@@ -24,9 +24,11 @@ Chạy observer: nó kết nối TCP 5760. Chưa có telemetry thì cửa sổ y
 
 C cho PX4 gửi telemetry UDP đến gateway. Nếu chưa có PX4, mở `scripts/windows/CHAY_MAU_UDP.cmd` để phát lại fixture 60 giây. Replay chỉ phát dữ liệu mẫu, không xử lý lệnh mới; ACK có sẵn trong fixture không chứng minh một lệnh thực tế đã được PX4 thực hiện. Kiểm thử lệnh hai chiều tại máy dùng CHAY_DEMO.
 
-Controller hỗ trợ một lệnh chờ ACK mỗi lần. Ví dụ gõ `arm`, đợi ACK rồi gõ `takeoff 5`. Timeout mặc định 1 giây/lần, tối đa 3 lần gửi tổng cộng. ACK IN_PROGRESS chuyển sang chờ tiến độ theo timeout riêng. `quit` dừng controller; Ctrl+C dừng observer/gateway. Chờ chương trình ghi xong log trước khi đóng cửa sổ.
+Controller hỗ trợ một lệnh chờ ACK mỗi lần. Ví dụ gõ `arm`, đợi ACK và trạng thái Armed rồi gõ `takeoff` không kèm số. Trên PX4 1.15.4, client gửi NaN cho tọa độ và độ cao chưa chỉ định để PX4 dùng vị trí hiện tại và MIS_TAKEOFF_ALT. Nếu nhập `takeoff N`, N là độ cao AMSL, không phải tăng thêm N mét. Timeout mặc định 1 giây/lần, tối đa 3 lần gửi tổng cộng. ACK IN_PROGRESS chuyển sang chờ tiến độ theo timeout riêng. `quit` dừng controller; Ctrl+C dừng observer/gateway. Chờ chương trình ghi xong log trước khi đóng cửa sổ.
 
 ## 4. Cấu hình và lệnh cụ thể
+
+Controller mặc định ẩn telemetry và ACK thô trên console để nhập lệnh thuận tiện; dữ liệu vẫn được nhận, giải mã, cập nhật Inspector và ghi log theo mode. Mở observer để xem telemetry. Thêm `--verbose` khi chạy trực tiếp c_client.exe nếu cần xem chi tiết ngay ở controller. Kết quả lệnh và các ACK liên quan vẫn được thông báo; ACK bị bỏ qua vẫn được ghi log.
 
 Mở PowerShell tại thư mục project:
 
@@ -44,7 +46,7 @@ File JSON dùng chung có cấu trúc lồng; cấu hình phẳng cũ của A kh
 Kiểm tra cấu hình C sẽ dùng mà chưa kết nối mạng:
 
 ```powershell
-.\build\bin\c_client.exe --config config/gateway.example.json --role controller --print-config
+.\bin\c_client.exe --config config/gateway.example.json --role controller --print-config
 ```
 
 ## 5. Các lỗi thường gặp

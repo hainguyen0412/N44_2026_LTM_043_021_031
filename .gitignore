@@ -1,4 +1,5 @@
 # Build products and runtime evidence
+/bin/
 /build/
 /output/
 *.exe
@@ -26,3 +27,13 @@ __pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Draw.io automatic backups
+*.drawio.bkp
+
+# Local report copies and generated document exports
+/docs/report/
+/docs/guides/word/
+/docs/design/diagrams/exports_chuong_3_4/
+*.zip
+*.zip.sha256

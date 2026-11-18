@@ -17,7 +17,7 @@ Phạm vi bàn giao này là mã Windows của gateway và client; PX4 SITL/Gaze
 | Nhiều client | Mở 2–9 observer và 1 controller | Tất cả nhận telemetry; client chậm không làm client khác dừng |
 | Vai trò | Thử controller thứ hai, thử uplink từ observer bằng bài kiểm thử có sẵn | Gateway từ chối đúng vai trò, ghi sự kiện |
 | ARM | Từ controller gửi `arm` khi SITL đủ điều kiện | `commands.csv` + ACK và trạng thái armed từ PX4; ghi nguyên lý do nếu PX4 từ chối |
-| TAKEOFF | Sau ARM thành công, gửi `takeoff 5` | ACK + thay đổi độ cao/trạng thái từ PX4 |
+| TAKEOFF | Sau ARM thành công, gửi `takeoff`; đặt MIS_TAKEOFF_ALT trong PX4 nếu cần độ cao cụ thể | ACK + thay đổi độ cao/trạng thái từ PX4 |
 | LAND | Gửi `land` và theo dõi | ACK + trạng thái hạ cánh từ PX4 |
 | ACK/retry | Ghi lại ACK accepted/rejected/in_progress nếu PX4 phát; lỗi timeout kiểm thử cục bộ có sẵn | Command ID, target, số lần gửi, thời điểm và kết quả; không gán timeout thành thành công |
 | Mất nguồn | Dừng telemetry quá heartbeat_stale_after_ms rồi thử lệnh; bật lại cùng endpoint | `heartbeat_stale`, không gửi lệnh khi nguồn cũ; heartbeat cùng endpoint phục hồi |

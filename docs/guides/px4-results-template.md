@@ -1,7 +1,7 @@
 # Kết quả kiểm thử PX4 — C điền
 
 - Ngày giờ, người chạy:
-- Project version và SHA256 `build/bin/gateway.exe`, `build/bin/c_client.exe`:
+- Project version và SHA256 `bin/gateway.exe`, `bin/c_client.exe`:
 - PX4 version/commit, model SITL, lệnh khởi chạy:
 - Windows/WSL/Linux version; số CPU logic và RAM:
 - IP Windows/PX4/client, chế độ mạng, UDP endpoint thực tế:

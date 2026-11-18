@@ -25,11 +25,14 @@ C sở hữu console client kết nối đến gateway, Command Manager, bộ re
 4. Một hàng đợi gửi với một writer tránh trộn byte heartbeat/lệnh/ACK. Frame ưu tiên không cắt ngang frame đang gửi. Fake gateway dùng timer riêng để không chặn nhận trong thời gian đợi ACK và gửi fixture theo ranh giới từng khung.
 5. Có log cấu hình hiệu lực, định kỳ metrics khi socket nhàn rỗi, cửa sổ warmup/đo đúng, thống kê uplink tách downlink, CPU/RSS đo thật và latency có giới hạn bộ nhớ. Thời gian monotonic thuộc từng tiến trình; không dùng để đo xuyên máy.
 6. Ctrl+C/quit được phát hiện ngay cả khi peer chưa đóng chiều gửi. Trước khi chốt log, dừng sampler/ticker, drain có hạn, hủy phần còn lại và join send worker. Lỗi ghi log được báo ra stderr và exit code lỗi.
-7. Trên Windows, worker gửi dùng overlapped WSASend với token hủy. Khi dừng, thao tác đang chờ được hủy bằng CancelIoEx và được thu hồi hoàn tất trước khi giải phóng buffer. Không phụ thuộc riêng vào shutdown để đánh thức một send đang bị chặn; giữ nguyên giới hạn dừng một giây trong bài hồi quy. Bài cancel_write_without_shutdown kiểm tra việc hủy khi socket vẫn mở.
 
 `commands.csv` dùng `queued` để nói lệnh đã được đưa vào hàng đợi. ACK timeout hiện bắt đầu tại thời điểm enqueue; khi hàng đợi quá chậm có thể hết thời gian trước lúc peer nhận được. B2 có sự kiện hoàn tất socket với timestamp riêng để đối chiếu. Chưa có kết quả PX4 thì không suy ra việc bay từ một ACK trong giả lập.
 
 ## Kiểm thử
+
+Console controller mặc định chỉ in hướng dẫn và sự kiện lệnh, ẩn telemetry, ACK thô và thông báo ack_ignored; observer giữ cách hiển thị cũ. Cờ --verbose bật lại phần hiển thị chi tiết. Việc nhận, giải mã và ghi log vẫn chạy. control_params_test.py phát heartbeat liên tục khi gửi lệnh để kiểm tra console yên, ACK vẫn hoạt động và --verbose hiển thị trở lại.
+
+Bản cập nhật demo điều khiển: `takeoff` gửi NaN ở yaw, lat, lon và altitude để PX4 1.15.4 chọn vị trí hiện tại và độ cao MIS_TAKEOFF_ALT. `takeoff N` vẫn là N mét AMSL và phải là số hữu hạn; chuỗi sai hoặc dư đối số bị từ chối trước khi gửi. LAND gửi NaN cho các trường vị trí không chỉ định. `control_params_test.py` đối chiếu CRC và tham số COMMAND_LONG thực tế qua TCP, ACK cho năm lệnh và từ chối bảy chuỗi sai ở cả B0/B1/B2. Việc bay thực tế cần xác nhận riêng trên SITL.
 
 `c_tests.exe` kiểm tra Command Manager bằng clock giả. `metrics_tests.exe` kiểm tra biên cửa sổ, dừng sớm, hạn drain và nearest-rank. `send_queue_tests.exe` kiểm tra luồng byte, ưu tiên, socket bị chặn, lỗi gửi và drain.
 

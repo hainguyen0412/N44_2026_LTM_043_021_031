@@ -1,6 +1,6 @@
 # Giao ước tích hợp MAVLink Gateway phiên bản 1
 
-Tài liệu này chốt giao diện và cấu hình chung cho A, B và C. Dự án Lap_trinh_mang đã tích hợp gateway, parser/Inspector/logger và client/Command Manager. Kiểm thử PX4 SITL sẽ do C thực hiện theo `px4-testing.md`. Các giá trị tải và timeout là tham số thử nghiệm, có thể thay bằng cấu hình và phải được ghi lại khi đo.
+Tài liệu này chốt giao diện và cấu hình chung cho A, B và C. Bản Project_CK_LTM_v1 đã tích hợp gateway, parser/Inspector/logger và client/Command Manager. Kiểm thử PX4 SITL sẽ do C thực hiện theo `px4-testing.md`. Các giá trị tải và timeout là tham số thử nghiệm, có thể thay bằng cấu hình và phải được ghi lại khi đo.
 
 Hai tệp dùng chung:
 
@@ -214,7 +214,7 @@ B và C cùng kiểm tra fixture lệnh, A kiểm tra việc cô lập session v
 
 ## 11. Bộ fixture đầu tiên
 
-B bàn giao dưới thư mục `tests/fixtures/v1/`. Bộ đầu tiên đã được sinh và đối chiếu độc lập; xem `docs/part-b.md` để chạy module và kiểm thử:
+B bàn giao dưới thư mục `tests/fixtures/v1/`. Bộ đầu tiên đã được sinh và đối chiếu độc lập; xem `docs/design/part-b.md` để chạy module và kiểm thử:
 
 - `valid.bin`: nối 7 khung: 5 bản tin giải mã, COMMAND_LONG và PING hợp lệ.
 - `manifest.json`: phiên bản/commit tham chiếu, seed, byte offset/độ dài mỗi khung, raw hex, header và trường giải mã mong đợi. SEQ và ID nguồn cố định, mô tả rõ đơn vị.
