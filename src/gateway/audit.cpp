@@ -22,13 +22,16 @@ LoggerOptions options_for(const Config& c){
     return options;
 }
 }
-Audit::Audit(const Config& c):logger_(options_for(c)),directory(logger_.directory()){}
+Audit::Audit(const Config& c){
+    if(c.logging_enabled){logger_=std::make_unique<CsvLogger>(options_for(c));directory=logger_->directory();}
+}
 void Audit::log(const std::string& file,std::vector<std::string> values,bool){
+    if(!logger_)return;
     static const std::map<std::string,LogTable> tables{
         {"frames",LogTable::Frames},{"issues",LogTable::Issues},{"delivery",LogTable::Delivery},
         {"events",LogTable::Events},{"metrics",LogTable::Metrics},{"client_summary",LogTable::ClientSummary}};
     const auto it=tables.find(file);
     if(it==tables.end())throw std::invalid_argument("Unknown audit table: "+file);
-    logger_.record_row(it->second,values);
+    logger_->record_row(it->second,values);
 }
 }

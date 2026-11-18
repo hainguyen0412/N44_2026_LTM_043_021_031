@@ -15,7 +15,11 @@ struct Config {
     std::size_t log_file_bytes = 100 * 1024 * 1024, log_run_bytes = 512 * 1024 * 1024;
     std::size_t log_record_bytes=16384;
     int log_flush_ms=1000,log_drain_ms=2000,snapshot_interval_ms=1000;
+    bool logging_enabled=false;
     bool reject_commands_when_stale=true;
+    bool mission_enabled=false;
+    std::size_t mission_max_items=100;
+    unsigned mission_timeout_ms=1500, mission_max_attempts=5;
     std::vector<std::uint16_t> allowed_commands{400,22,21};
     int heartbeat_stale_ms = 3000, drain_ms = 5000, send_timeout_ms = 5000;
     int socket_send_buffer_bytes = 0, send_chunk_bytes = 0;

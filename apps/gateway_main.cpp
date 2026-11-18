@@ -40,6 +40,9 @@ int main(int argc,char** argv){
         const auto root=project_root();
         const auto path=arguments.count("--config")?std::filesystem::path(arguments.at("--config")):root/"config/gateway.example.json";
         auto config=mavlink_gateway::load_config(path.string());
+#ifdef MGW_TEST_FILE_LOGGING
+        config.logging_enabled=true; // Instrumented test executable only.
+#endif
         if(std::filesystem::path(config.output_root).is_relative())config.output_root=(root/config.output_root).lexically_normal().string();
         config.run_id=arguments.count("--run-id")?arguments.at("--run-id"):
             "run_"+std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())+"_"+std::to_string(GetCurrentProcessId());
@@ -57,6 +60,7 @@ int main(int argc,char** argv){
         mavlink_gateway::Gateway gateway(config,
             [limit=config.tcp_buffer_bytes]{return std::make_unique<mavlink_gateway::Parser>(limit);},
             decoder,inspector,[inspector](mavlink_gateway::SourceId id){inspector->forget_source(id);});
+        std::cout<<"File logging: "<<(config.logging_enabled?"ON":"OFF")<<"\n";
         gateway.start();
         while(!InterlockedCompareExchange(&stop_requested,0,0)&&!gateway.failed()){
             if(config.run_seconds&&gateway.now_ns()>=std::uint64_t(config.run_seconds)*1000000000ULL)break;
@@ -64,7 +68,8 @@ int main(int argc,char** argv){
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
         gateway.stop();
-        std::cout<<"STOPPED. Results: "<<config.output_root<<'/'<<config.run_id<<"/gateway\n";
+        if(config.logging_enabled)std::cout<<"STOPPED. Results: "<<config.output_root<<'/'<<config.run_id<<"/gateway\n";
+        if(!config.logging_enabled)std::cout<<"STOPPED. File logging: OFF.\n";
         return gateway.failed()?1:0;
     }catch(const std::exception& e){std::cerr<<"ERROR: "<<e.what()<<'\n';return 1;}
 }

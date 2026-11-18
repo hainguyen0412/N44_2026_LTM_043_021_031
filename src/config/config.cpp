@@ -36,9 +36,17 @@ const Json& section(const Json& root,const char* key,std::initializer_list<const
 Config load_config(const std::string& path){
     std::ifstream input(path);if(!input)throw std::runtime_error("Cannot open config: "+path);
     Json j;input>>j;
-    keys(j,"root",{"schema_version","network","px4","protocol","limits","client","commands","measurement","logging"});
-    number(j,"schema_version",1,1);
+    keys(j,"root",{"schema_version","network","px4","protocol","limits","client","commands","measurement","logging","mission"});
+    const auto schema=number(j,"schema_version",1,2);
     Config c;
+    if(schema==1&&j.contains("mission"))throw std::runtime_error("mission requires schema_version 2");
+    if(schema==2){
+        const auto& mission=section(j,"mission",{"enabled","max_items","timeout_ms","max_attempts"});
+        c.mission_enabled=boolean(mission,"enabled");
+        c.mission_max_items=number(mission,"max_items",3,100);
+        c.mission_timeout_ms=static_cast<unsigned>(number(mission,"timeout_ms",200,10000));
+        c.mission_max_attempts=static_cast<unsigned>(number(mission,"max_attempts",1,5));
+    }
     const auto& net=section(j,"network",{"udp_bind","tcp_observer_bind","tcp_controller_bind","max_observers","max_controllers"});
     auto bind=[&](const char* key,std::string& host,std::uint16_t& port){
         const auto& value=net.at(key);keys(value,key,{"host","port"});
@@ -78,10 +86,10 @@ Config load_config(const std::string& path){
     c.gcs_compid=static_cast<std::uint8_t>(number(client,"gcs_compid",1,255));
     const auto& command=section(j,"commands",{"allowed_command_ids","max_pending","ack_timeout_ms","max_total_attempts","in_progress_idle_timeout_ms","in_progress_total_timeout_ms"});
     const auto& commands=command.at("allowed_command_ids");
-    if(!commands.is_array()||commands.empty()||commands.size()>3)throw std::runtime_error("Invalid allowed_command_ids");
+    if(!commands.is_array()||commands.empty()||commands.size()>(c.mission_enabled?4U:3U))throw std::runtime_error("Invalid allowed_command_ids");
     c.allowed_commands.clear();
     for(const auto& id:commands){Json temp={{"id",id}};auto n=number(temp,"id",1,65535);
-        if((n!=400&&n!=22&&n!=21)||std::find(c.allowed_commands.begin(),c.allowed_commands.end(),n)!=c.allowed_commands.end())throw std::runtime_error("Unsupported/duplicate command ID");
+        if((n!=400&&n!=22&&n!=21&&!(c.mission_enabled&&n==300))||std::find(c.allowed_commands.begin(),c.allowed_commands.end(),n)!=c.allowed_commands.end())throw std::runtime_error("Unsupported/duplicate command ID");
         c.allowed_commands.push_back(static_cast<std::uint16_t>(n));}
     number(command,"max_pending",1,1);number(command,"ack_timeout_ms",1,60000);number(command,"max_total_attempts",1,3);
     const auto idle=number(command,"in_progress_idle_timeout_ms",1,600000);

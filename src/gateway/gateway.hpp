@@ -52,6 +52,7 @@ private:
     MonoNs heartbeat_ns_ = 0;
     std::unordered_map<std::string, std::uint64_t> candidates_; // UDP receiver owns this map
     std::atomic<std::uint64_t> next_source_{1}, next_session_{1}, next_frame_{1};
+    std::atomic<SessionId> active_controller_{0};
     std::atomic<std::uint64_t> valid_{0}, crc_{0}, unsupported_{0}, truncated_{0}, noise_{0};
     std::atomic<std::uint64_t> udp_datagrams_{0}, udp_drop_{0}, client_drop_{0}, tx_bytes_{0};
     std::atomic<std::uint64_t> window_valid_{0}, eligible_{0}, sent_{0}, max_clients_{0};
