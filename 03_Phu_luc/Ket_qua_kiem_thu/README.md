@@ -1,6 +1,4 @@
-# Xác minh sau khi tổ chức lại repository
-
-Ngày 13/11/2026, project được chuyển sang cây thư mục C++ đã thống nhất và build chung bằng CMake/Ninja trên Windows MinGW UCRT64. `test_summary.json` ghi môi trường, phạm vi, kết quả và SHA256 binary.
+build bằng CMake/Ninja trên Windows MinGW UCRT64. `test_summary.json` ghi môi trường, phạm vi, kết quả và SHA256 binary.
 
 | Kiểm tra | Kết quả |
 |---|---|
