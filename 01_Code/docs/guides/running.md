@@ -1,10 +1,16 @@
 # Cách chương trình chạy
 
+Các đường dẫn trong hướng dẫn tính từ `01_Code` hoặc từ thư mục chứa
+`CMakeLists.txt` trong gói đã giải nén.
+
 ## 1. Khi nhấp file CMD
 
-File CMD nằm trong `scripts/windows`. Nó lấy thư mục chứa chính nó bằng `%~dp0`, rồi gọi `..\run.ps1` ở thư mục scripts. PowerShell đặt thư mục làm việc về gốc project và gọi executable trong `build/bin`. Nhấp từ Explorer hoặc mở từ thư mục khác vẫn tìm được cấu hình và fixture.
+Launcher chạy chương trình nằm trong `scripts/windows`. Nó lấy vị trí bằng `%~dp0`
+và gọi `..\run.ps1`. PowerShell đặt thư mục làm việc về gốc mã nguồn.
+Gateway, console và web client nằm trong `bin/`, replay nằm trong `build/bin/`
+và các executable có đo kiểm nằm trong `build/test_support/bin/`.
 
-Khi mới clone repo, cần build CMake theo README trước. Có thể nhấp `scripts/windows/BUILD.cmd` khi CMake, Ninja, g++ và Python đã trong PATH. ZIP Windows có binary sẵn có thể chạy demo trực tiếp.
+Khi mới clone repo, cần build CMake theo README trước. Có thể nhấp `scripts/windows/BUILD.cmd` khi CMake, Ninja, g++ và Python đã trong PATH. ZIP Windows có sẵn Gateway, console và web client. Demo đo kiểm cần build các target kiểm thử.
 
 PowerShell dùng `-ExecutionPolicy Bypass` cho đúng lần gọi đó để chạy script đi kèm, không sửa ExecutionPolicy toàn máy. C++ mới là chương trình thực hiện mạng và xử lý dữ liệu. Sau khi sửa C++, chạy BUILD để tạo lại `.exe`; sửa JSON thì chương trình đọc cấu hình ở lần khởi động tiếp theo.
 

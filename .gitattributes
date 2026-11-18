@@ -17,4 +17,4 @@ CMakeLists.txt text eol=lf
 *.drawio text eol=lf
 
 # Preserve upstream files and license notices byte-for-byte.
-/third_party/** -text
+/01_Code/third_party/** -text

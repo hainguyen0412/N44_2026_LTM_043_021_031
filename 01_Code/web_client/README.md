@@ -19,7 +19,8 @@ Phần dùng chung nằm ở `src/client/client_runtime.*`, `mission_manager.*`,
 
 ## Build
 
-Tại gốc project, sau khi có toolchain theo README:
+Tại `01_Code` trong repository hoặc thư mục chứa `CMakeLists.txt` của gói
+đã giải nén, sau khi có toolchain theo README:
 
 ```powershell
 cmake --preset windows-release

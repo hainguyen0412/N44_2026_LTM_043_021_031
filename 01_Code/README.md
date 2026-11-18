@@ -1,8 +1,11 @@
-# MAVLink Gateway — Project_CK_LTM_v2
+# MAVLink Telemetry Gateway và Packet Inspector
 
 Dự án C++17 nhận MAVLink 2 qua UDP, kiểm tra khung và chuyển tiếp tới client TCP.
 Web local hiển thị telemetry, điều khiển và lập mission trên map campus DUT.
 Windows 64 bit chạy gateway/client; máy Ubuntu riêng chạy PX4 1.15.4 và Gazebo.
+
+Các lệnh trong tài liệu này chạy từ `01_Code` trong repository hoặc từ thư mục
+chứa `CMakeLists.txt` của gói đã giải nén.
 
 ## Mở web
 
@@ -32,7 +35,7 @@ Hướng dẫn: [web và demo hai máy](docs/guides/web-client-running.md).
 ## Cây thư mục
 
 ```text
-Project_CK_LTM_v2/
+01_Code/                      # Gốc mã nguồn và các lệnh bên dưới
 ├── bin/                       # gateway.exe, web_client.exe, c_client.exe
 ├── config/                    # Cấu hình chung, mission và cấu hình máy
 ├── apps/                      # Entry point gateway và console
@@ -57,9 +60,7 @@ Project_CK_LTM_v2/
 │   ├── guides/                # Hướng dẫn chạy và PX4
 │   ├── design/                # Kiến trúc, giao ước, API, mission, sơ đồ
 │   ├── planning/              # Kế hoạch triển khai
-│   ├── references/            # Đề cương gốc
-│   └── verification/          # Ghi nhận kiểm chứng các phiên bản
-├── .github/workflows/         # CI Windows
+│   └── references/            # Đề cương gốc
 ├── CMakeLists.txt
 └── CMakePresets.json
 ```
@@ -108,16 +109,17 @@ không cần Ubuntu được mô tả trong hướng dẫn web.
 
 ## GitHub và đóng gói
 
-Giữ source, cấu hình mẫu, fixture, asset và thư viện trong Git. Không commit
-`bin/`, `build/`, `output/`, cấu hình `*.local.json` hoặc cache. CI build và chạy
-kiểm thử; kết quả PX4/Gazebo thật cần đối chiếu riêng.
+Trong repository, CI Windows nằm ở `.github/workflows/` ngay tại gốc.
+Git theo dõi mã nguồn, cấu hình mẫu, fixture, tài nguyên và phụ thuộc.
+`bin/`, `build/`, `output/`, cấu hình `*.local.json` và cache là dữ liệu cục bộ.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package.ps1 -WithBinaries
 ```
 
-Gói Windows lấy đúng 3 executable từ `bin/` cùng source/config/asset. ZIP và
-checksum sinh vào `build/releases/`. Trong bản giải nén, dùng
+Gói Windows lấy đúng 3 executable từ `bin/` cùng mã nguồn, cấu hình, tài nguyên
+và tài liệu của gốc CMake. Báo cáo, phụ lục và workflow nằm trong repository.
+ZIP và checksum sinh vào `build/releases/`. Trong bản giải nén, dùng
 `python -B tools/verify_package.py` để kiểm manifest.
 
 ## Tài liệu

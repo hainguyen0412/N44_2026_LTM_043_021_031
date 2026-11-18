@@ -67,7 +67,7 @@ không phát raw MAVLink hoặc ghi stdin của console.
 
 Xem [API](web-api.md), [mission](mission-protocol.md), [map](campus-map.md) và
 [hướng dẫn chạy](../guides/web-client-running.md). Kết quả local cùng phần chưa kiểm chứng
-được ghi trong [báo cáo web](../verification/web-client-results.md).
+được ghi trong `03_Phu_luc/Ket_qua_kiem_thu/web-client-results.md` tính từ gốc repository.
 
 ## Chính sách file log của bản chạy thường
 

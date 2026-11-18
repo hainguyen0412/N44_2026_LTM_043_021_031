@@ -4,6 +4,9 @@ Phạm vi bàn giao này là mã Windows của gateway và client; PX4 SITL/Gaze
 
 ## Chuẩn bị
 
+Các đường dẫn Windows tính từ `01_Code`. Phần Ubuntu trong
+[hướng dẫn web](web-client-running.md#ubuntu) chỉ vị trí đặt world và model trong PX4-Autopilot.
+
 1. Chạy `scripts/windows/TEST.cmd` trên máy Windows để xác nhận bộ kiểm thử nội bộ.
 2. Copy cấu hình chung thành `config/px4.local.json`. Điền IP gateway trong `client.gateway_host`, xác nhận PX4 sysid/compid, GCS ID và ba cổng. Giữ MAVLink 2 common không ký số theo phạm vi project.
 3. Tại PX4, cấu hình một đường MAVLink gửi UDP đến **IP gateway Windows:cổng udp_bind**. Lệnh thiết lập cụ thể tùy phiên bản/môi trường PX4 của C; chép nguyên lệnh thực tế vào báo cáo.
