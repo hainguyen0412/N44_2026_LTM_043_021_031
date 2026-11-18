@@ -182,7 +182,7 @@ def run_case(client, output, mode, kind):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--client', type=Path, default=ROOT / 'build/bin/c_client.exe')
+    parser.add_argument('--client', type=Path, default=ROOT / 'build/test_support/bin/c_client.exe')
     parser.add_argument('--output', type=Path, default=ROOT / f'output/test_results/c_metrics_{time.time_ns()}')
     args = parser.parse_args()
     output = args.output.resolve(); output.mkdir(parents=True, exist_ok=False)

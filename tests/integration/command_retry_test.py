@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import socket
 import struct
@@ -96,7 +97,7 @@ def run_case(client, output, target, command, console, params, run_suffix):
                                 raise ValueError('Unexpected COMMAND_LONG payload length')
                             fields = struct.unpack('<7fHBBB', raw[10:-2].ljust(33, b'\0'))
                             result['commands'].append({
-                                'command': fields[7], 'params': list(fields[:7]),
+                                'command': fields[7], 'params': [None if math.isnan(v) else v for v in fields[:7]],
                                 'target_system': fields[8], 'target_component': fields[9],
                                 'confirmation': fields[10],
                                 'gcs_system': raw[5], 'gcs_component': raw[6], 'raw_hex': raw.hex(),
@@ -145,7 +146,7 @@ def run_case(client, output, target, command, console, params, run_suffix):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--client', type=Path, default=ROOT / 'build/bin/c_client.exe')
+    parser.add_argument('--client', type=Path, default=ROOT / 'build/test_support/bin/c_client.exe')
     parser.add_argument('--output', type=Path, default=ROOT / f'output/test_results/c_retry_{time.time_ns()}')
     args = parser.parse_args()
     client, output = args.client.resolve(), args.output.resolve()
@@ -157,7 +158,7 @@ def main():
     for target in [(1, 1), (23, 42)]:
         for command, console, params in [
             (400, 'arm', [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-            (22, 'takeoff 123.5', [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 123.5]),
+            (22, 'takeoff 123.5', [0.0, 0.0, 0.0, None, None, None, 123.5]),
         ]:
             result = run_case(client, output, target, command, console, params, run_suffix)
             results.append(result)

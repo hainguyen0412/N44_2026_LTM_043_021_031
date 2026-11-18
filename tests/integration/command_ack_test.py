@@ -157,7 +157,7 @@ def run_case(client, output, mode, name, spec, suffix):
 def main():
     cases = scenarios()
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--client', type=Path, default=ROOT / 'build/bin/c_client.exe')
+    parser.add_argument('--client', type=Path, default=ROOT / 'build/test_support/bin/c_client.exe')
     parser.add_argument('--output', type=Path, default=ROOT / f'output/test_results/c_ack_{time.time_ns()}')
     parser.add_argument('--modes', nargs='+', choices=['B0', 'B1', 'B2'], default=['B0', 'B1', 'B2'])
     parser.add_argument('--cases', nargs='+', choices=list(cases), default=list(cases))

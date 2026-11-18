@@ -244,7 +244,7 @@ def main():
               for ack in ['accept', 'reject', 'progress', 'none', 'late']]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--server', type=Path, default=ROOT / 'build/bin/fake_gateway.exe')
-    parser.add_argument('--client', type=Path, default=ROOT / 'build/bin/c_client.exe')
+    parser.add_argument('--client', type=Path, default=ROOT / 'build/test_support/bin/c_client.exe')
     parser.add_argument('--queue-tests', type=Path, default=ROOT / 'build/bin/send_queue_tests.exe')
     parser.add_argument('--output', type=Path, default=ROOT / f'output/test_results/c_transport_{time.time_ns()}')
     parser.add_argument('--cases', nargs='+', choices=names, default=names)
