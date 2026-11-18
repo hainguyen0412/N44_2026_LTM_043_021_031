@@ -123,5 +123,4 @@ checksum sinh vào `build/releases/`. Trong bản giải nén, dùng
 ## Tài liệu
 
 Xem [mục lục](docs/README.md), [kiến trúc A/B/C](docs/design/architecture.md) và
-[hướng dẫn web](docs/guides/web-client-running.md). Hướng dẫn Markdown hiện tại là nguồn cho đường dẫn chạy mới.
-Bản Git không kèm báo cáo Word, ảnh xuất từ sơ đồ hoặc ZIP trùng nội dung.
+[hướng dẫn web](docs/guides/web-client-running.md).
