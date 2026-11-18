@@ -160,7 +160,7 @@ long Socket::recv_some(std::uint8_t* buf, std::size_t len) {
     return static_cast<long>(::recv(h_, reinterpret_cast<char*>(buf), static_cast<int>(len), 0));
 }
 
-Socket Socket::tcp_connect(const std::string& host, int port, std::string* error) {
+Socket Socket::tcp_connect(const std::string& host, int port, std::string* error, int timeout_ms) {
     sockaddr_in addr{};
     if (!resolve(host, port, addr, error)) return Socket();
     Socket s(::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
@@ -170,10 +170,27 @@ Socket Socket::tcp_connect(const std::string& host, int port, std::string* error
     }
     int one = 1;
     setsockopt(s.h_, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&one), sizeof(one));
-    if (::connect(s.h_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
-        if (error) *error = "connect() loi " + std::to_string(last_error());
-        return Socket();
+#ifdef _WIN32
+    u_long nonblocking = 1;
+    if(ioctlsocket(s.h_,FIONBIO,&nonblocking)!=0){if(error)*error="nonblocking connect setup failed";return Socket();}
+    int code=0;
+    if(::connect(s.h_,reinterpret_cast<const sockaddr*>(&addr),sizeof(addr))!=0){
+        code=last_error();
+        if(code==WSAEWOULDBLOCK||code==WSAEINPROGRESS){
+            fd_set writers,errors;FD_ZERO(&writers);FD_ZERO(&errors);FD_SET(s.h_,&writers);FD_SET(s.h_,&errors);
+            timeval wait{timeout_ms/1000,(timeout_ms%1000)*1000};
+            const int ready=::select(0,nullptr,&writers,&errors,&wait);
+            if(ready<=0)code=ready==0?WSAETIMEDOUT:last_error();
+            else {int size=sizeof(code);if(getsockopt(s.h_,SOL_SOCKET,SO_ERROR,reinterpret_cast<char*>(&code),&size)!=0)code=last_error();}
+        }
     }
+    nonblocking=0;
+    if(ioctlsocket(s.h_,FIONBIO,&nonblocking)!=0&&code==0)code=last_error();
+    if(code){if(error)*error="connect() loi "+std::to_string(code);return Socket();}
+#else
+    (void)timeout_ms;
+    if(::connect(s.h_,reinterpret_cast<const sockaddr*>(&addr),sizeof(addr))!=0){if(error)*error="connect() loi "+std::to_string(last_error());return Socket();}
+#endif
     return s;
 }
 

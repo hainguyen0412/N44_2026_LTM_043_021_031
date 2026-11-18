@@ -21,6 +21,7 @@ using mavlink_gateway::MonoNs;
 constexpr std::uint16_t kCmdArm = 400;     // MAV_CMD_COMPONENT_ARM_DISARM
 constexpr std::uint16_t kCmdTakeoff = 22;  // MAV_CMD_NAV_TAKEOFF
 constexpr std::uint16_t kCmdLand = 21;     // MAV_CMD_NAV_LAND
+constexpr std::uint16_t kCmdMissionStart = 300;
 
 using Params = std::array<float, 7>;
 

@@ -15,6 +15,6 @@ struct ClientOptions {
     bool controller = false, verbose = false, help = false, print_config = false;
 };
 
-ClientOptions load_client_options(int argc, char** argv);
+ClientOptions load_client_options(int argc, char** argv, bool test_file_logging = false);
 const char* client_usage();
 } // namespace cclient

@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -81,6 +82,8 @@ std::string describe(const DecodedMessage& m) {
 
 void print_help() {
     std::printf("Lenh: arm | disarm | takeoff [do_cao_amsl_m] | land | help | quit\n");
+    std::printf("takeoff: tai vi tri hien tai, dung do cao MIS_TAKEOFF_ALT cua PX4.\n"
+                "takeoff N: N la do cao AMSL (m), khong phai do cao tang them.\n");
 }
 } // namespace
 
@@ -147,6 +150,7 @@ int run_client(const ClientOptions& a) {
             [&](const Bytes& raw) { return send_raw(raw); },
             [&](const CommandEvent& e) {
                 log.command(e);
+                if (!a.verbose && e.event == "ack_ignored") return;
                 std::printf("[LENH #%llu cmd=%u] %s (lan gui %u)%s\n", (unsigned long long)e.request_id, e.command,
                             e.event.c_str(), e.attempt,
                             e.result ? (" result=" + std::to_string(*e.result)).c_str() : "");
@@ -173,6 +177,8 @@ int run_client(const ClientOptions& a) {
 
         std::thread([&] {
             print_help();
+            if (!a.verbose)
+                std::printf("Controller an telemetry tren console de nhap lenh. Xem du lieu o observer; --verbose de hien chi tiet.\n");
             std::string line;
             while (running && std::getline(std::cin, line)) {
                 std::istringstream in(line);
@@ -186,15 +192,32 @@ int run_client(const ClientOptions& a) {
                 }
                 Params p{};
                 std::uint16_t cmd = 0;
+                bool invalid = false;
                 if (word == "arm") { cmd = kCmdArm; p[0] = 1; }
                 else if (word == "disarm") { cmd = kCmdArm; p[0] = 0; }
                 else if (word == "takeoff") {
                     cmd = kCmdTakeoff;
-                    double alt;
-                    // CHUA KIEM CHUNG tren PX4 SITL: tham so TAKEOFF can thu that (xem muc 7 giao uoc).
-                    if (in >> alt) p[6] = static_cast<float>(alt);
-                } else if (word == "land") cmd = kCmdLand;
+                    // PX4 1.15 uses current lat/lon for NaN coordinates; NaN altitude
+                    // selects its configured takeoff height above current altitude.
+                    p[3] = p[4] = p[5] = p[6] = std::numeric_limits<float>::quiet_NaN();
+                    in >> std::ws;
+                    if (!in.eof()) {
+                        double alt = 0;
+                        if (!(in >> alt) || !std::isfinite(alt) ||
+                            std::abs(alt) > (std::numeric_limits<float>::max)()) invalid = true;
+                        else p[6] = static_cast<float>(alt);
+                    }
+                } else if (word == "land") {
+                    cmd = kCmdLand;
+                    p[3] = p[4] = p[5] = p[6] = std::numeric_limits<float>::quiet_NaN();
+                }
                 else { print_help(); continue; }
+                in >> std::ws;
+                if (invalid || !in.eof()) {
+                    std::printf("Lenh khong hop le; khong gui. Dung takeoff hoac takeoff <AMSL huu han>.\n");
+                    log.event("invalid_command_input", word);
+                    continue;
+                }
                 if (std::find(a.shared.allowed_commands.begin(), a.shared.allowed_commands.end(), cmd) == a.shared.allowed_commands.end()) {
                     std::printf("Command %u is disabled by config\n", cmd);
                     log.event("command_not_allowed", std::to_string(cmd));
@@ -254,9 +277,12 @@ int run_client(const ClientOptions& a) {
                     std::lock_guard<std::mutex> lock(manager_mutex);
                     manager->on_ack(*ack, f.header.sysid, f.header.compid, f.received_at_ns);
                 }
-                std::printf("%s\n", describe(*d).c_str());
+                if (!a.controller || a.verbose) std::printf("%s\n", describe(*d).c_str());
                 continue;
             }
+            // Keep decoding, Inspector, logging and metrics active, but leave
+            // the controller's input console readable while telemetry streams.
+            if (a.controller && !a.verbose) continue;
             const MonoNs t = now_ns();
             auto it = last_print.find(f.header.msgid);
             if (a.verbose || it == last_print.end() || t - it->second >= 500000000ULL) {
@@ -315,7 +341,13 @@ int run_client(const ClientOptions& a) {
 
 int main(int argc, char** argv) {
     ClientOptions options;
-    try { options = load_client_options(argc, argv); }
+    try { options = load_client_options(argc, argv,
+#ifdef MGW_TEST_FILE_LOGGING
+            true
+#else
+            false
+#endif
+        ); }
     catch (const std::exception& error) {
         std::fprintf(stderr, "Config/CLI error: %s\n", error.what());
         return 2;

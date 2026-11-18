@@ -2,6 +2,7 @@
 // Dong goi cac ban tin uplink cua GCS thanh raw bytes MAVLink 2 (khong ky).
 // Header nay KHONG include thu vien MAVLink C; chi file .cpp moi dung.
 #include "mavlink_gateway/contracts.hpp"
+#include "mavlink_gateway/mission.hpp"
 #include <array>
 #include <cstdint>
 
@@ -12,6 +13,11 @@ struct GcsId {
 };
 
 mavlink_gateway::Bytes build_gcs_heartbeat(const GcsId& gcs);
+mavlink_gateway::Bytes build_mission_count(const GcsId&, std::uint8_t, std::uint8_t, std::uint16_t);
+mavlink_gateway::Bytes build_mission_request_list(const GcsId&, std::uint8_t, std::uint8_t);
+mavlink_gateway::Bytes build_mission_request(const GcsId&, std::uint8_t, std::uint8_t, std::uint16_t);
+mavlink_gateway::Bytes build_mission_item(const GcsId&, std::uint8_t, std::uint8_t, const mavlink_gateway::MissionItem&);
+mavlink_gateway::Bytes build_mission_ack(const GcsId&, std::uint8_t, std::uint8_t, std::uint8_t result);
 
 mavlink_gateway::Bytes build_command_long(const GcsId& gcs, std::uint8_t target_system,
                                           std::uint8_t target_component, std::uint16_t command,

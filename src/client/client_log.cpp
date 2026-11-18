@@ -21,7 +21,7 @@ namespace {
 ClientLog::ClientLog(const ClientOptions& options, ClientMetrics::TimeFn clock)
     : options_(options), clock_(std::move(clock)) {
 #ifndef C_NO_LOGGER
-    if (options.run_id.empty()) return;
+    if (!options.shared.logging_enabled || options.run_id.empty()) return;
     LoggerOptions o;
     o.root_directory = options.shared.output_root; o.run_id = options.run_id; o.component = options.name;
     o.mode = options.mode; o.seed = options.shared.seed; o.scope = "client_c";

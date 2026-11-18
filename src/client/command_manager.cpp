@@ -118,7 +118,8 @@ void CommandManager::on_ack(const CommandAck& ack, std::uint8_t src_sys, std::ui
 void CommandManager::tick(MonoNs now) {
     if (state_ == State::WaitingAck) {
         if (now >= pending_.last_sent_ns && now - pending_.last_sent_ns >= cfg_.ack_timeout_ns) {
-            if (pending_.attempts < cfg_.max_sends) send_attempt(now);
+            if (pending_.command != kCmdMissionStart && pending_.attempts < cfg_.max_sends) send_attempt(now);
+            else if(pending_.command==kCmdMissionStart) finish(Outcome::Unknown,"final_unknown",now);
             else finish(Outcome::Timeout, "final_timeout", now);
         }
     } else if (state_ == State::InProgress) {
